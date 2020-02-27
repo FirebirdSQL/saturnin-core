@@ -39,7 +39,7 @@ PLATFORM_OID: str = '1.3.6.1.4.1.53446.1.2.0'
 "Platform OID (`firebird.butler.platform.saturnin`)"
 PLATFORM_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, PLATFORM_OID)
 "Platform UID (:func:`~uuid.uuid5` - NAMESPACE_OID)"
-PLATFORM_VERSION: str = '0.5.0'
+PLATFORM_VERSION: str = '0.5.1'
 "Platform version (semver)"
 
 VENDOR_OID: str = '1.3.6.1.4.1.53446.1.3.0'
