@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools >= 53.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "saturnin-core"
+version = "0.7.0"
+description = "Modules required by some Saturnin core services"
+readme = "README.rst"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [{ name = "Pavel Císař", email = "pcisar@users.sourceforge.net"}]
+keywords = ["Saturnin", "Core", "Services", "Firebird", "Butler", "Platform", "ZeroMQ"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Topic :: System :: Systems Administration",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Logging",
+    "Topic :: Database",
+    ]
+dependencies = [
+    "saturnin>=0.7.0"
+    ]
+
+[project.urls]
+Home = "http://firebirdsql.org/en/saturnin/"
+Documentation = "https://saturnin-core.rtfd.io"
+"Bug Reports" = "https://github.com/FirebirdSQL/saturnin-core/issues"
+Funding = "https://www.firebirdsql.org/en/donate/"
+Source = "https://github.com/FirebirdSQL/saturnin-core"

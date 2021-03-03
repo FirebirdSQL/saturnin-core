@@ -1,0 +1,54 @@
+# Map of Firebird Foundation Inc. OID namespace
+# segment: Saturnin Microservices
+# origin: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros.oid
+# oid-name: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro
+#
+# Description of root node for this sub-tree
+node:
+  oid: 1.3.6.1.4.1.53446.1.2.0.3
+  name: micro
+  description: Root node for registered Saturnin Microservices
+  contact: Pavel Císař
+  email: pcisar@users.sourceforge.net
+  site: https://firebirdsql.org/en/saturnin/
+  parent-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin/master/oid/saturnin.oid
+  type: node     # enumeration: "root", "node", "leaf"
+
+# List of children nodes in order of numbers assigned to them
+# could be omitted for leaf node (see node.type)
+children:
+  - number: 0
+    name: dummy
+    description: Microservice for internal testing purposes
+    contact: Pavel Císař
+    email: pcisar@users.sourceforge.net
+    site: https://firebirdsql.org/en/saturnin/
+    node-spec: private
+  - number: 1
+    name: text
+    description: Microservices for text manipulation
+    contact: Pavel Císař
+    email: pcisar@users.sourceforge.net
+    site: https://firebirdsql.org/en/saturnin/
+    node-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros/text.oid
+  - number: 2
+    name: binary
+    description: Microservices for binary data manipulation
+    contact: Pavel Císař
+    email: pcisar@users.sourceforge.net
+    site: https://firebirdsql.org/en/saturnin/
+    node-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros/binary.oid
+  - number: 3
+    name: proto
+    description: Microservices for protobuf manipulation
+    contact: Pavel Císař
+    email: pcisar@users.sourceforge.net
+    site: https://firebirdsql.org/en/saturnin/
+    node-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros/proto.oid
+  - number: 4
+    name: firebird
+    description: Microservices for Firebird RDBMS operations
+    contact: Pavel Císař
+    email: pcisar@users.sourceforge.net
+    site: https://firebirdsql.org/en/saturnin/
+    node-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros/firebird.oid

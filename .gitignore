@@ -131,3 +131,6 @@ dmypy.json
 # WingIDE
 *.wpr
 *.wpu
+
+# Sphinx build
+docs/_build
