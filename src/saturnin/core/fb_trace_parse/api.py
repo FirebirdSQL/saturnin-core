@@ -50,7 +50,7 @@ SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.4.2.2'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
-TRACE_PROTO =  'saturnin.protobuf.fbtrace.TraceEntry'
+TRACE_PROTO =  'saturnin.core.protobuf.fbtrace.TraceEntry'
 TRACE_FORMAT = MIME(f'{MIME_TYPE_PROTO};type={TRACE_PROTO}')
 
 # Configuration
@@ -105,7 +105,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Firebird trace parser microservice",
                       facilities=[],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:FbTraceParserMicro',
+                      package='saturnin.core.fb_trace_parse',
+                      factory='saturnin.core.fb_trace_parse.service:FbTraceParserMicro',
                       config=partial(create_config, FbTraceParserConfig,
                                      f'{SERVICE_AGENT.name}_service'))

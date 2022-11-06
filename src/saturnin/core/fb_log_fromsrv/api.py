@@ -94,7 +94,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Firebird log from server provider microservice",
                       facilities=['firebird'],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:FbLogFromSrvMicro',
+                      package='saturnin.core.fb_log_fromsrv',
+                      factory='saturnin.core.fb_log_fromsrv.service:FbLogFromSrvMicro',
                       config=partial(create_config, FbLogFromSrvConfig,
                                      f'{SERVICE_AGENT.name}_service'))

@@ -116,7 +116,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Text line filter microservice",
                       facilities=[],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:TextLineFilterMicro',
+                      package='saturnin.core.text_filter',
+                      factory='saturnin.core.text_filter.service:TextLineFilterMicro',
                       config=partial(create_config, TextFilterConfig,
                                      f'{SERVICE_AGENT.name}_service'))

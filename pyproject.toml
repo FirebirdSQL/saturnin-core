@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "saturnin-core"
 version = "0.7.3"
-description = "Modules required by some Saturnin core services"
+description = "Saturnin core services"
 readme = "README.rst"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
@@ -32,14 +33,6 @@ dependencies = [
     "saturnin>=0.7.3"
     ]
 
-[tool.setuptools]
-zip-safe = true
-
-[project.entry-points."firebird.butler.protobuf"]
-"saturnin.core.protobuf.common" = "saturnin.core.protobuf.common_pb2:DESCRIPTOR"
-"saturnin.core.protobuf.fblog" = "saturnin.core.protobuf.fblog_pb2:DESCRIPTOR"
-"saturnin.core.protobuf.fbtrace" = "saturnin.core.protobuf.fbtrace_pb2:DESCRIPTOR"
-
 [project.urls]
 Home = "http://firebirdsql.org/en/saturnin/"
 Documentation = "https://saturnin-core.rtfd.io"
@@ -47,4 +40,25 @@ Documentation = "https://saturnin-core.rtfd.io"
 Funding = "https://www.firebirdsql.org/en/donate/"
 Source = "https://github.com/FirebirdSQL/saturnin-core"
 
+[project.entry-points."firebird.butler.protobuf"]
+"saturnin.core.protobuf.common" = "saturnin.core.protobuf.common_pb2:DESCRIPTOR"
+"saturnin.core.protobuf.fblog" = "saturnin.core.protobuf.fblog_pb2:DESCRIPTOR"
+"saturnin.core.protobuf.fbtrace" = "saturnin.core.protobuf.fbtrace_pb2:DESCRIPTOR"
+
+[project.entry-points."saturnin.service"]
+"saturnin.text.writer" = "saturnin.core.text_writer.api:SERVICE_DESCRIPTOR"
+"saturnin.text.reader" = "saturnin.core.text_reader.api:SERVICE_DESCRIPTOR"
+"saturnin.text.linefilter" = "saturnin.core.text_filter.api:SERVICE_DESCRIPTOR"
+"saturnin.binary.writer" = "saturnin.core.binary_writer.api:SERVICE_DESCRIPTOR"
+"saturnin.binary.reader" = "saturnin.core.binary_reader.api:SERVICE_DESCRIPTOR"
+"saturnin.proto.printer" = "saturnin.core.proto_printer.api:SERVICE_DESCRIPTOR"
+"saturnin.proto.filter" = "saturnin.core.proto_filter.api:SERVICE_DESCRIPTOR"
+"saturnin.proto.aggregator" = "saturnin.core.proto_aggregator.api:SERVICE_DESCRIPTOR"
+"saturnin.firebird.log.fromsrv" = "saturnin.core.fb_log_fromsrv.api:SERVICE_DESCRIPTOR"
+"saturnin.firebird.log.parser" = "saturnin.core.fb_log_parse.api:SERVICE_DESCRIPTOR"
+"saturnin.firebird.trace.parser" = "saturnin.core.fb_trace_parse.api:SERVICE_DESCRIPTOR"
+"saturnin.firebird.trace.session" = "saturnin.core.fb_trace_session.api:SERVICE_DESCRIPTOR"
+
+[tool.setuptools]
+zip-safe = true
 

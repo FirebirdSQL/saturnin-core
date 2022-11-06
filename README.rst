@@ -2,16 +2,18 @@
 Saturnin core services
 ======================
 
-This repository contains core set of services for Saturnin.
+The core set of services for Saturnin currently contains next services:
 
-The saturnin-core package (released on PyPI) contains only modules required by some
-Saturnin core services (they may list it as dependency).
+* Text file reader microservice [saturnin.text.reader]
+* Text file writer microservice [saturnin.text.writer]
+* Text line filter microservice [saturnin.text.linefilter]
+* Binary data file reader microservice [saturnin.binary.reader]
+* Binary data file writer microservice [saturnin.binary.writer]
+* Protobuf printer microservice [saturnin.proto.printer]
+* Protobuf filter microservice [saturnin.proto.filter]
+* Protobuf aggregator microservice [saturnin.proto.aggregator]
+* Firebird log from server provider microservice [saturnin.firebird.log.fromsrv]
+* Firebird log parser microservice [saturnin.firebird.log.parser]
+* Firebird trace parser microservice [saturnin.firebird.trace.parser]
+* Firebird trace session provider microservice [saturnin.firebird.trace.session]
 
-The core services itself are not distributed via PyPI, but as separate ZIP package(s) that
-are installed via "saturnin-pkg" utility from "saturnin" package.
-
-You may either download the "core" services package from `gihub releases`_, or you may
-create such Saturnin package(s) yourself by simply ZIP the directory for particular service,
-or ZIP entire content of "services" directory to make a "budle" package.
-
-.. _gihub releases: https://github.com/FirebirdSQL/saturnin-core/releases

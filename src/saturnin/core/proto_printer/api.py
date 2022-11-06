@@ -124,7 +124,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Protobuf data printer microservice",
                       facilities=[],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:ProtoPrinterMicro',
+                      package='saturnin.core.proto_printer',
+                      factory='saturnin.core.proto_printer.service:ProtoPrinterMicro',
                       config=partial(create_config, ProtoPrinterConfig,
                                      f'{SERVICE_AGENT.name}_service'))

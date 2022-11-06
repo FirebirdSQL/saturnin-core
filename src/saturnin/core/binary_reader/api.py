@@ -87,7 +87,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Binary data reader microservice",
                       facilities=[],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:BinaryReaderMicro',
+                      package='saturnin.core.binary_reader',
+                      factory='saturnin.core.binary_reader.service:BinaryReaderMicro',
                       config=partial(create_config, BinaryReaderConfig,
                                      f'{SERVICE_AGENT.name}_service'))

@@ -53,7 +53,7 @@ SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.3.3'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
-AGGREGATE_PROTO =  'saturnin.protobuf.GenericDataRecord'
+AGGREGATE_PROTO =  'saturnin.core.protobuf.GenericDataRecord'
 AGGREGATE_FORMAT = MIME(f'{MIME_TYPE_PROTO};type={AGGREGATE_PROTO}')
 
 AGGREGATE_FUNCTIONS = ['count', 'min', 'max', 'sum', 'avg']
@@ -80,7 +80,7 @@ class ProtoAggregatorConfig(DataFilterConfig):
         """Extended validation.
 
         - that 'input_format' MIME type is 'application/x.fb.proto'
-        - that 'output_format' MIME type is 'application/x.fb.proto;type=saturnin.protobuf.common.GenDataRecord'
+        - that 'output_format' MIME type is 'application/x.fb.proto;type=saturnin.core.protobuf.common.GenDataRecord'
         - that 'aggregate' values have format '<aggregate_func>:<field_spec>', and
           <aggregate_func> is from supported functions
         """
@@ -115,7 +115,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Protobuf data aggregator microservice",
                       facilities=[],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:ProtoAggregatorMicro',
+                      package='saturnin.core.proto_aggregator',
+                      factory='saturnin.core.proto_aggregator.service:ProtoAggregatorMicro',
                       config=partial(create_config, ProtoAggregatorConfig,
                                      f'{SERVICE_AGENT.name}_service'))

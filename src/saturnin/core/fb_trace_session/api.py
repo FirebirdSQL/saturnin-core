@@ -100,7 +100,7 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Firebird trace session provider microservice",
                       facilities=['firebird'],
-                      package=pkg_name(__name__),
-                      factory=f'{pkg_name(__name__)}.service:FbTraceSessionMicro',
+                      package='saturnin.core.fb_trace_session',
+                      factory='saturnin.core.fb_trace_session.service:FbTraceSessionMicro',
                       config=partial(create_config, FbTraceSessionConfig,
                                      f'{SERVICE_AGENT.name}_service'))
