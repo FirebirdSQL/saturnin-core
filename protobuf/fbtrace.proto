@@ -29,7 +29,7 @@
 
 syntax = "proto3";
 
-package saturnin.protobuf.fbtrace;
+package saturnin.core.protobuf.fbtrace;
 
 import "google/protobuf/timestamp.proto";
 

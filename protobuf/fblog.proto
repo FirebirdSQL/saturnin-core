@@ -29,11 +29,11 @@
 
 syntax = "proto3";
 
-package saturnin.protobuf.fblog;
+package saturnin.core.protobuf.fblog;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
-import "saturnin/protobuf/common.proto";
+import "saturnin/core/protobuf/common.proto";
 
 // Firebird facility codes
 

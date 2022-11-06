@@ -3,48 +3,43 @@ requires = ["setuptools >= 65.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "saturnin-core"
-version = "0.7.3"
-description = "Modules required by some Saturnin core services"
+name = "saturnin.binary.writer"
+version = "0.1.1"
+description = "Binary data writer microservice"
 readme = "README.rst"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
 authors = [{ name = "Pavel Císař", email = "pcisar@users.sourceforge.net"}]
-keywords = ["Saturnin", "Core", "Services", "Firebird", "Butler", "Platform", "ZeroMQ"]
+keywords = ["binary", "writer", "micro"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
     "Topic :: System :: Systems Administration",
     "Topic :: System :: Monitoring",
-    "Topic :: System :: Logging",
-    "Topic :: Database",
+    "Topic :: System :: Logging"
     ]
 dependencies = [
-    "saturnin>=0.7.3"
+    "saturnin>=0.7.2"
     ]
 
-[tool.setuptools]
-zip-safe = true
-
-[project.entry-points."firebird.butler.protobuf"]
-"saturnin.core.protobuf.common" = "saturnin.core.protobuf.common_pb2:DESCRIPTOR"
-"saturnin.core.protobuf.fblog" = "saturnin.core.protobuf.fblog_pb2:DESCRIPTOR"
-"saturnin.core.protobuf.fbtrace" = "saturnin.core.protobuf.fbtrace_pb2:DESCRIPTOR"
-
 [project.urls]
-Home = "http://firebirdsql.org/en/saturnin/"
+Home = "https://github.com/FirebirdSQL/saturnin"
 Documentation = "https://saturnin-core.rtfd.io"
 "Bug Reports" = "https://github.com/FirebirdSQL/saturnin-core/issues"
 Funding = "https://www.firebirdsql.org/en/donate/"
 Source = "https://github.com/FirebirdSQL/saturnin-core"
 
+[tool.setuptools]
+zip-safe = true
 
+[tool.saturnin.metadata]
+component-type = "service"
+uid = "df1aeeaf-194c-5bcc-93b9-891c0216f3d8"
+descriptor = "api:SERVICE_DESCRIPTOR"

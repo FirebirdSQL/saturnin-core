@@ -29,7 +29,7 @@
 
 syntax = "proto3";
 
-package saturnin.protobuf;
+package saturnin.core.protobuf;
 
 import "google/protobuf/struct.proto";
 
