@@ -43,8 +43,8 @@ import re
 from functools import partial
 from firebird.base.config import create_config, StrOption, IntOption, PyExprOption, \
      PyCallableOption
-from saturnin.base import VENDOR_UID, Error, pkg_name, AgentDescriptor, \
-     ServiceDescriptor, MIME_TYPE_TEXT
+from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
+                           MIME_TYPE_TEXT)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.linefilter

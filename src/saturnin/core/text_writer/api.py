@@ -41,8 +41,8 @@ from firebird.base.config import create_config, MIMEOption, StrOption, EnumOptio
 import uuid
 from functools import partial
 from firebird.base.protobuf import is_msg_registered
-from saturnin.base import VENDOR_UID, Error, FileOpenMode, pkg_name, \
-     AgentDescriptor, ServiceDescriptor, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO
+from saturnin.base import (VENDOR_UID, Error, FileOpenMode, AgentDescriptor,
+                           ServiceDescriptor, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO)
 from saturnin.lib.data.onepipe import DataConsumerConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.writer

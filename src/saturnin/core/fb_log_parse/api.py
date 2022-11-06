@@ -41,8 +41,8 @@ from __future__ import annotations
 import uuid
 from functools import partial
 from firebird.base.config import create_config
-from saturnin.base import VENDOR_UID, Error, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, \
-     pkg_name, AgentDescriptor, ServiceDescriptor
+from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO,
+                           AgentDescriptor, ServiceDescriptor)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.log.parser

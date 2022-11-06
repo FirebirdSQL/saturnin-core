@@ -41,8 +41,7 @@ from firebird.base.config import create_config, StrOption, EnumOption
 import uuid
 from enum import Enum, auto
 from functools import partial
-from saturnin.base import VENDOR_UID, Error, FileOpenMode, pkg_name,  AgentDescriptor, \
-     ServiceDescriptor
+from saturnin.base import VENDOR_UID, Error, FileOpenMode, AgentDescriptor, ServiceDescriptor
 from saturnin.lib.data.onepipe import DataConsumerConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.binary.writer

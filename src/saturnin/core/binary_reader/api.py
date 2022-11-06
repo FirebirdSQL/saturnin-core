@@ -41,7 +41,7 @@ from __future__ import annotations
 from firebird.base.config import create_config, StrOption, IntOption
 import uuid
 from functools import partial
-from saturnin.base import VENDOR_UID, Error, pkg_name, AgentDescriptor, ServiceDescriptor
+from saturnin.base import VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.reader
