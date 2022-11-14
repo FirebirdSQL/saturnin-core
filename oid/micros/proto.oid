@@ -6,7 +6,7 @@
 # Description of root node for this sub-tree
 node:
   oid: 1.3.6.1.4.1.53446.1.1.0.3.3
-  name: data
+  name: proto
   description: Microservices for protobuf manipulation
   contact: Pavel Císař
   email: pcisar@users.sourceforge.net
