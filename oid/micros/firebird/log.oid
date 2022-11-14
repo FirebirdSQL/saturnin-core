@@ -5,7 +5,7 @@
 #
 # Description of root node for this sub-tree
 node:
-  oid: 1.3.6.1.4.1.53446.1.2.0.3.4.1
+  oid: 1.3.6.1.4.1.53446.1.1.0.3.4.1
   name: log
   description: Root node for registered Firebird Butler Microservices for Firebird RDBMS log processing
   contact: Pavel Císař
