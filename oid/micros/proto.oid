@@ -10,7 +10,7 @@ node:
   description: Microservices for protobuf manipulation
   contact: Pavel Císař
   email: pcisar@users.sourceforge.net
-  site: https://firebirdsql.org/en/saturnin-sdk/
+  site: https://firebirdsql.org/en/saturnin/
   parent-spec: https://raw.githubusercontent.com/FirebirdSQL/saturnin-core/master/oid/micros.oid
   type: node     # enumeration: "root", "node", "leaf"
 
