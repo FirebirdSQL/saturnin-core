@@ -26,7 +26,7 @@ children:
     node-spec: private
   - number: 1
     name: text
-    description: Microservices for text manipulation
+    description: Microservices for text data manipulation
     contact: Pavel Císař
     email: pcisar@users.sourceforge.net
     site: https://firebirdsql.org/en/saturnin/

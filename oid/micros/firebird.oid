@@ -7,7 +7,7 @@
 node:
   oid: 1.3.6.1.4.1.53446.1.1.0.3.4
   name: firebird
-  description: Root node for registered Saturnin Microservices for Firebird RDBMS operations
+  description: Microservices for Firebird RDBMS operations
   contact: Pavel Císař
   email: pcisar@users.sourceforge.net
   site: https://firebirdsql.org/en/saturnin/
