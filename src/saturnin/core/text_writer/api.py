@@ -123,7 +123,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Text writer microservice",
                       facilities=[],
-                      package='saturnin.core.text_writer',
                       factory='saturnin.core.text_writer.service:TextWriterMicro',
                       config=partial(create_config, TextWriterConfig,
                                      f'{SERVICE_AGENT.name}_service'))

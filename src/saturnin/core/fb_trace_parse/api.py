@@ -105,7 +105,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Firebird trace parser microservice",
                       facilities=[],
-                      package='saturnin.core.fb_trace_parse',
                       factory='saturnin.core.fb_trace_parse.service:FbTraceParserMicro',
                       config=partial(create_config, FbTraceParserConfig,
                                      f'{SERVICE_AGENT.name}_service'))

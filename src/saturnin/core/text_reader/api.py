@@ -105,7 +105,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Text reader microservice",
                       facilities=[],
-                      package='saturnin.core.text_reader',
                       factory='saturnin.core.text_reader.service:TextReaderMicro',
                       config=partial(create_config, TextReaderConfig,
                                      f'{SERVICE_AGENT.name}_service'))

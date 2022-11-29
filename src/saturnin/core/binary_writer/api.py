@@ -99,7 +99,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Binary data writer microservice",
                       facilities=[],
-                      package='saturnin.core.binary_writer',
                       factory='saturnin.core.binary_writer.service:BinaryWriterMicro',
                       config=partial(create_config, BinaryWriterConfig,
                                      f'{SERVICE_AGENT.name}_service'))

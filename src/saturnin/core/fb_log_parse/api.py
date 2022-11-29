@@ -105,7 +105,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Firebird log parser microservice",
                       facilities=[],
-                      package='saturnin.core.fb_log_parse',
                       factory='saturnin.core.fb_log_parse.service:FbLogParserMicro',
                       config=partial(create_config, FbLogParserConfig,
                                      f'{SERVICE_AGENT.name}_service'))

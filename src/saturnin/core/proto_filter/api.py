@@ -133,7 +133,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Protobuf data filter microservice",
                       facilities=[],
-                      package='saturnin.core.proto_filter',
                       factory='saturnin.core.proto_filter.service:ProtoFilterMicro',
                       config=partial(create_config, ProtoFilterConfig,
                                      f'{SERVICE_AGENT.name}_service'))

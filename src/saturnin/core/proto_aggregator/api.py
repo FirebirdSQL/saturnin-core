@@ -115,7 +115,6 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       api=[],
                       description="Protobuf data aggregator microservice",
                       facilities=[],
-                      package='saturnin.core.proto_aggregator',
                       factory='saturnin.core.proto_aggregator.service:ProtoAggregatorMicro',
                       config=partial(create_config, ProtoAggregatorConfig,
                                      f'{SERVICE_AGENT.name}_service'))
