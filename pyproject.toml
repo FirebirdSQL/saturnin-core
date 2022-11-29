@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "saturnin-core"
-version = "0.7.3"
+version = "0.8.0"
 description = "Saturnin core services"
 readme = "README.rst"
 requires-python = ">=3.8"
@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Database",
     ]
 dependencies = [
-    "saturnin>=0.7.3"
+    "saturnin>=0.8.0"
     ]
 
 [project.urls]
@@ -46,18 +46,18 @@ Source = "https://github.com/FirebirdSQL/saturnin-core"
 "saturnin.core.protobuf.fbtrace" = "saturnin.core.protobuf.fbtrace_pb2:DESCRIPTOR"
 
 [project.entry-points."saturnin.service"]
-"saturnin.text.writer" = "saturnin.core.text_writer.api:SERVICE_DESCRIPTOR"
-"saturnin.text.reader" = "saturnin.core.text_reader.api:SERVICE_DESCRIPTOR"
-"saturnin.text.linefilter" = "saturnin.core.text_filter.api:SERVICE_DESCRIPTOR"
-"saturnin.binary.writer" = "saturnin.core.binary_writer.api:SERVICE_DESCRIPTOR"
-"saturnin.binary.reader" = "saturnin.core.binary_reader.api:SERVICE_DESCRIPTOR"
-"saturnin.proto.printer" = "saturnin.core.proto_printer.api:SERVICE_DESCRIPTOR"
-"saturnin.proto.filter" = "saturnin.core.proto_filter.api:SERVICE_DESCRIPTOR"
-"saturnin.proto.aggregator" = "saturnin.core.proto_aggregator.api:SERVICE_DESCRIPTOR"
-"saturnin.firebird.log.fromsrv" = "saturnin.core.fb_log_fromsrv.api:SERVICE_DESCRIPTOR"
-"saturnin.firebird.log.parser" = "saturnin.core.fb_log_parse.api:SERVICE_DESCRIPTOR"
-"saturnin.firebird.trace.parser" = "saturnin.core.fb_trace_parse.api:SERVICE_DESCRIPTOR"
-"saturnin.firebird.trace.session" = "saturnin.core.fb_trace_session.api:SERVICE_DESCRIPTOR"
+"514faccc-a938-5109-ab0c-8d403e898709" = "saturnin.core.text_writer.api:SERVICE_DESCRIPTOR"
+"13ec0815-fe8a-5b0c-a3bc-76404bf07104" = "saturnin.core.text_reader.api:SERVICE_DESCRIPTOR"
+"a311d7c4-3ca1-57e6-9203-5c0f08c7e5f2" = "saturnin.core.text_filter.api:SERVICE_DESCRIPTOR"
+"df1aeeaf-194c-5bcc-93b9-891c0216f3d8" = "saturnin.core.binary_writer.api:SERVICE_DESCRIPTOR"
+"207facd5-fc8b-5741-9cba-91ec9d3ab25b" = "saturnin.core.binary_reader.api:SERVICE_DESCRIPTOR"
+"4bf551b7-d138-5014-98cd-261dab381d83" = "saturnin.core.proto_printer.api:SERVICE_DESCRIPTOR"
+"3b210c54-5b80-5c04-b88c-4cfe4b04a6a7" = "saturnin.core.proto_filter.api:SERVICE_DESCRIPTOR"
+"07708d74-f57d-5aaf-a638-011363e1d452" = "saturnin.core.proto_aggregator.api:SERVICE_DESCRIPTOR"
+"40d8648b-2920-5bc5-a1a2-9fc761be3442" = "saturnin.core.fb_log_fromsrv.api:SERVICE_DESCRIPTOR"
+"35fcea0e-c0fd-55a4-9641-12ed0cf85d9b" = "saturnin.core.fb_log_parse.api:SERVICE_DESCRIPTOR"
+"e9567080-85ed-5773-b09b-64b7fe7164f5" = "saturnin.core.fb_trace_parse.api:SERVICE_DESCRIPTOR"
+"bf8d0d53-7223-5fe8-aef3-8489865c3cbb" = "saturnin.core.fb_trace_session.api:SERVICE_DESCRIPTOR"
 
 [tool.setuptools]
 zip-safe = true
