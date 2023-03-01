@@ -39,14 +39,14 @@ services and send it as blocks of text to output data pipe.
 
 from __future__ import annotations
 import uuid
-from firebird.base.config import create_config, StrOption, IntOption
+from firebird.base.config import StrOption, IntOption
 from functools import partial
-from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
+from saturnin.base import (create_config, VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
                            MIME_TYPE_TEXT)
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.log.fromsrv
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.4.1.1'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.4.1.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
@@ -95,5 +95,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Firebird log from server provider microservice",
                       facilities=['firebird'],
                       factory='saturnin.core.fb_log_fromsrv.service:FbLogFromSrvMicro',
-                      config=partial(create_config, FbLogFromSrvConfig,
+                      config=partial(create_config, FbLogFromSrvConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

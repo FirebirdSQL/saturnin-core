@@ -37,15 +37,15 @@ This microservice is a DATA_PROVIDER that sends blocks of text from file to outp
 """
 
 from __future__ import annotations
-from firebird.base.config import create_config, MIMEOption, StrOption, IntOption
+from firebird.base.config import MIMEOption, StrOption, IntOption
 import uuid
 from functools import partial
 from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor, MIME,
-                           MIME_TYPE_TEXT)
+                           MIME_TYPE_TEXT, create_config)
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.reader
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.1.1'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.1.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
@@ -58,6 +58,7 @@ class TextReaderConfig(DataProviderConfig):
         super().__init__(name)
         # Adjust default batch_size to compensate default 64K messages
         self.batch_size.default = 5
+        self.batch_size.value = 5
         #: File specification
         self.filename: StrOption = StrOption('filename', "File specification", required=True)
         #: File data format specification
@@ -106,5 +107,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Text reader microservice",
                       facilities=[],
                       factory='saturnin.core.text_reader.service:TextReaderMicro',
-                      config=partial(create_config, TextReaderConfig,
+                      config=partial(create_config, TextReaderConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

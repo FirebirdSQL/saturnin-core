@@ -41,14 +41,13 @@ from __future__ import annotations
 import uuid
 import re
 from functools import partial
-from firebird.base.config import create_config, StrOption, IntOption, PyExprOption, \
-     PyCallableOption
+from firebird.base.config import StrOption, IntOption, PyExprOption, PyCallableOption
 from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
-                           MIME_TYPE_TEXT)
+                           MIME_TYPE_TEXT, create_config)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.linefilter
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.1.3'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.1.3'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
@@ -117,5 +116,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Text line filter microservice",
                       facilities=[],
                       factory='saturnin.core.text_filter.service:TextLineFilterMicro',
-                      config=partial(create_config, TextFilterConfig,
+                      config=partial(create_config, TextFilterConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

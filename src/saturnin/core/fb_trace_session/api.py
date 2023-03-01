@@ -40,13 +40,13 @@ services and send trace output as blocks of text to output data pipe.
 from __future__ import annotations
 import uuid
 from functools import partial
-from firebird.base.config import create_config, StrOption, IntOption
-from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
-                           MIME_TYPE_TEXT)
+from firebird.base.config import StrOption, IntOption
+from saturnin.base import (create_config, VENDOR_UID, Error, AgentDescriptor,
+                           ServiceDescriptor, MIME_TYPE_TEXT)
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.trace.session
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.4.2.1'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.4.2.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
@@ -101,5 +101,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Firebird trace session provider microservice",
                       facilities=['firebird'],
                       factory='saturnin.core.fb_trace_session.service:FbTraceSessionMicro',
-                      config=partial(create_config, FbTraceSessionConfig,
+                      config=partial(create_config, FbTraceSessionConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

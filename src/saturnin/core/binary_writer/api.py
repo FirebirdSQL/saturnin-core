@@ -37,15 +37,16 @@ This microservice is a DATA_CONSUMER that wites binary data from input data pipe
 """
 
 from __future__ import annotations
-from firebird.base.config import create_config, StrOption, EnumOption
+from firebird.base.config import StrOption, EnumOption
 import uuid
 from enum import Enum, auto
 from functools import partial
-from saturnin.base import VENDOR_UID, Error, FileOpenMode, AgentDescriptor, ServiceDescriptor
+from saturnin.base import (create_config, VENDOR_UID, Error, FileOpenMode, AgentDescriptor,
+                           ServiceDescriptor)
 from saturnin.lib.data.onepipe import DataConsumerConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.binary.writer
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.2.2'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.2.2'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
@@ -100,5 +101,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Binary data writer microservice",
                       facilities=[],
                       factory='saturnin.core.binary_writer.service:BinaryWriterMicro',
-                      config=partial(create_config, BinaryWriterConfig,
+                      config=partial(create_config, BinaryWriterConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

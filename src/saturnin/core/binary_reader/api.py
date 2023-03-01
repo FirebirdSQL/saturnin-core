@@ -38,14 +38,14 @@ data pipe.
 """
 
 from __future__ import annotations
-from firebird.base.config import create_config, StrOption, IntOption
+from firebird.base.config import StrOption, IntOption
 import uuid
 from functools import partial
-from saturnin.base import VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor
+from saturnin.base import create_config, VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.reader
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.2.1'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.2.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
@@ -88,5 +88,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Binary data reader microservice",
                       facilities=[],
                       factory='saturnin.core.binary_reader.service:BinaryReaderMicro',
-                      config=partial(create_config, BinaryReaderConfig,
+                      config=partial(create_config, BinaryReaderConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

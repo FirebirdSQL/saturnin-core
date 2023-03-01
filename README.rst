@@ -2,6 +2,15 @@
 Saturnin core services
 ======================
 
+This repository contains core set of services for Saturnin.
+
+To install these services, it's necessary to properly initialize the `saturnin`
+deployment (see documentation for `saturnin`).
+
+The best way to install this package is via Saturnin CLI manager::
+
+   saturnin install saturnin-core
+
 The core set of services for Saturnin currently contains next services:
 
 * Text file reader microservice [saturnin.text.reader]

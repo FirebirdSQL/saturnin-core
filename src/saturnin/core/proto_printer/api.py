@@ -43,14 +43,14 @@ This microservice is a DATA_FILTER:
 from __future__ import annotations
 import uuid
 from functools import partial
-from firebird.base.config import create_config, StrOption, PyCallableOption
+from firebird.base.config import StrOption, PyCallableOption
 from firebird.base.protobuf import is_msg_registered
 from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO,
-                           SocketMode, AgentDescriptor, ServiceDescriptor)
+                           SocketMode, AgentDescriptor, ServiceDescriptor, create_config)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.proto.printer
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.3.1'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.3.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
@@ -125,5 +125,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Protobuf data printer microservice",
                       facilities=[],
                       factory='saturnin.core.proto_printer.service:ProtoPrinterMicro',
-                      config=partial(create_config, ProtoPrinterConfig,
+                      config=partial(create_config, ProtoPrinterConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

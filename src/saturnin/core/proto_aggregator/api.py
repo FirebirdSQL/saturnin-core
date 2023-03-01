@@ -43,13 +43,13 @@ This microservice is a DATA_FILTER:
 from __future__ import annotations
 import uuid
 from functools import partial
-from firebird.base.config import create_config, ListOption
+from firebird.base.config import ListOption
 from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_PROTO, AgentDescriptor,
-                           ServiceDescriptor)
+                           ServiceDescriptor, create_config)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.proto.aggregator
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.3.3'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.3.3'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
@@ -116,5 +116,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Protobuf data aggregator microservice",
                       facilities=[],
                       factory='saturnin.core.proto_aggregator.service:ProtoAggregatorMicro',
-                      config=partial(create_config, ProtoAggregatorConfig,
+                      config=partial(create_config, ProtoAggregatorConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))

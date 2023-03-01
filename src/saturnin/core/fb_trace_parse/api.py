@@ -40,13 +40,12 @@ from input data pipe, and sends parsed Firebird trace entries into output data p
 from __future__ import annotations
 import uuid
 from functools import partial
-from firebird.base.config import create_config
-from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO,
-                           AgentDescriptor, ServiceDescriptor)
+from saturnin.base import (create_config, VENDOR_UID, Error, MIME, MIME_TYPE_TEXT,
+                           MIME_TYPE_PROTO, AgentDescriptor, ServiceDescriptor)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.trace.parser
-SERVICE_OID: str = '1.3.6.1.4.1.53446.1.2.0.3.4.2.2'
+SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.4.2.2'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
@@ -106,5 +105,5 @@ SERVICE_DESCRIPTOR: ServiceDescriptor = \
                       description="Firebird trace parser microservice",
                       facilities=[],
                       factory='saturnin.core.fb_trace_parse.service:FbTraceParserMicro',
-                      config=partial(create_config, FbTraceParserConfig,
+                      config=partial(create_config, FbTraceParserConfig, SERVICE_UID,
                                      f'{SERVICE_AGENT.name}_service'))
