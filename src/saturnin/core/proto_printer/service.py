@@ -42,6 +42,7 @@ This microservice is a DATA_FILTER:
 
 from __future__ import annotations
 from typing import Dict, Sequence, ItemsView, Callable, Any, cast
+from google.protobuf.json_format import MessageToJson
 from firebird.base.protobuf import create_message, is_msg_registered, get_enum_field_type, \
      get_enum_value_name
 from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, Channel, SocketMode
@@ -83,6 +84,10 @@ class TransformationUtilities:
         if context:
             return eval(f'f"""{fmt}"""', globals(), context)
         return fmt
+    def as_json(self, data: Any) -> str:
+        """Returns message as JSON.
+        """
+        return MessageToJson(data)
 
 class ProtoPrinterMicro(DataFilterMicro):
     """Implementation of Protobuf printer microservice.

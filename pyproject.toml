@@ -30,7 +30,9 @@ classifiers = [
     "Topic :: Database",
     ]
 dependencies = [
-    "saturnin>=0.8.0"
+    "saturnin>=0.8.0",
+    "firebird-driver>=1.8.0",
+    "firebird-lib>=1.3.0"
     ]
 
 [project.urls]

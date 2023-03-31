@@ -69,7 +69,7 @@ class BinaryWriterConfig(DataConsumerConfig):
         self.file_mode: EnumOption = \
             (EnumOption('file_mode', FileOpenMode, "File I/O mode", required=False,
                         default=FileOpenMode.WRITE))
-        #: File storage type
+        #: File data storage type
         self.file_type: EnumOption = \
             (EnumOption('file_type', FileStorageType, "File data storage type", required=True))
     def validate(self) -> None:

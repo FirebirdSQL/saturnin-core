@@ -2,14 +2,11 @@
 Saturnin core services
 ======================
 
-This repository contains core set of services for Saturnin.
+This repository contains core set of services for Saturnin_.
 
-To install these services, it's necessary to properly initialize the `saturnin`
-deployment (see documentation for `saturnin`).
+For installation instructions, see the Saturnin_ documentation.
 
-The best way to install this package is via Saturnin CLI manager::
-
-   saturnin install saturnin-core
+For information how to use these services, see saturnin-core documentation_.
 
 The core set of services for Saturnin currently contains next services:
 
@@ -26,3 +23,5 @@ The core set of services for Saturnin currently contains next services:
 * Firebird trace parser microservice [saturnin.firebird.trace.parser]
 * Firebird trace session provider microservice [saturnin.firebird.trace.session]
 
+.. _Saturnin: https://saturnin.readthedocs.io/en/latest/
+.. _documentation: https://saturnin-core.readthedocs.io/en/latest/

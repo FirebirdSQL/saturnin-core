@@ -44,7 +44,7 @@ from functools import partial
 from saturnin.base import create_config, VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor
 from saturnin.lib.data.onepipe import DataProviderConfig
 
-# OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.reader
+# OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.binary.reader
 SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.2.1'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
@@ -58,7 +58,7 @@ class BinaryReaderConfig(DataProviderConfig):
         super().__init__(name)
         #: File specification
         self.filename: StrOption = StrOption('filename', "File specification", required=True)
-        #: Data block size
+        #: Data block size in bytes (-1 when size is stored before the data)
         self.block_size: IntOption = \
             (IntOption('block_size',
                        "Data block size in bytes (-1 when size is stored before the data)",

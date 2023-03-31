@@ -137,21 +137,6 @@ class TextLineFilterMicro(DataFilterMicro):
             channel: Channel associated with data pipe.
             session: Session associated with client.
             msg: DATA message that will be sent to client.
-
-        Important:
-            The base implementation simply raises StopError with ErrorCode.OK code, so
-            the descendant class must override this method without super() call.
-
-            The event handler must `popleft()` data from `output` queue and store them in
-            `msg.data_frame` attribute. It may also set ACK-REQUEST flag and `type_data`
-            attribute.
-
-            The event handler may cancel the transmission by raising the `StopError`
-            exception with `code` attribute containing the `ErrorCode` to be returned in
-            CLOSE message.
-
-        Note:
-            To indicate end of data, raise StopError with ErrorCode.OK code.
         """
         if not self.output:
             raise StopError("EOF", code=ErrorCode.OK)
@@ -167,20 +152,6 @@ class TextLineFilterMicro(DataFilterMicro):
             channel: Channel associated with data pipe.
             session: Session associated with client.
             data: Data received from client.
-
-        Important:
-            Any output data produced by event handler must be stored into output queue via
-            `store_output()` method.
-
-            The base implementation simply raises StopError with ErrorCode.OK code, so
-            the descendant class must override this method without super() call.
-
-            The event handler may cancel the transmission by raising the `StopError`
-            exception with `code` attribute containing the `ErrorCode` to be returned in
-            CLOSE message.
-
-        Note:
-            The ACK-REQUEST in received DATA message is handled automatically by protocol.
         """
         try:
             block: str = data.decode(encoding=session.charset, errors=session.errors)
@@ -220,8 +191,6 @@ class TextLineFilterMicro(DataFilterMicro):
         Note:
             This method is not called when code is not ErrorCode.OK and `propagate_input_error`
             option is True.
-
-            The default implementation does nothing.
         """
         buf = ''.join(self.output_buffer)
         self.store_output(buf)

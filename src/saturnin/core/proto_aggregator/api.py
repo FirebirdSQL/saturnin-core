@@ -65,10 +65,11 @@ class ProtoAggregatorConfig(DataFilterConfig):
     """
     def __init__(self, name: str):
         super().__init__(name)
-        #
+        #: Specification of fields that are 'group by' key
         self.group_by: ListOption = \
             ListOption('group_by', str, "Specification of fields that are 'group by' key",
                        required=True)
+        #: Specification for aggregates
         self.aggregate: ListOption = \
             ListOption('aggregate', str, "Specification for aggregates", required=True)
         #

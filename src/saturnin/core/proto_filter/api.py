@@ -63,17 +63,17 @@ class ProtoFilterConfig(DataFilterConfig):
         super().__init__(name)
         self.input_pipe_format.required = True
         self.output_pipe_format.required = True
-        #: Inclusion filter by Python expression
+        #: Data inclusion Python expression
         self.include_expr: PyExprOption = \
             PyExprOption('include_expr', "Data inclusion Python expression")
-        #: Inclusion filter by Python function
+        #: Data inclusion Python function
         self.include_func: PyCallableOption = \
             PyCallableOption('include_func', "Data inclusion Python function",
                              'def f(data: Any) -> bool:\n  ...\n')
-        #: Exclusion filter by Python expression
+        #: Data exclusion Python expression
         self.exclude_expr: PyExprOption = \
             PyExprOption('exclude_expr', "Data exclusion Python expression")
-        #: Exclusion filter by Python function
+        #: Data exclusion Python function
         self.exclude_func: PyCallableOption = \
             PyCallableOption('exclude_func', "Data exclusion Python function",
                              'def f(data: Any) -> bool:\n  ...\n')
