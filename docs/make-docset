@@ -1,0 +1,2 @@
+doc2dash -u https://saturnin-core.readthedocs.io/en/latest/ -f -i ./_static/fb-favicon.png -n saturnin-core ./_build/html/
+tar --exclude='.DS_Store' -cvzf ../dist/saturnin-core-docset.tgz saturnin-core.docset
