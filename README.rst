@@ -6,7 +6,7 @@ This repository contains core set of services for Saturnin_.
 
 For installation instructions, see the Saturnin_ documentation.
 
-For information how to use these services, see saturnin-core documentation_.
+For information how to use these services, see `Saturnin CORE`_ documentation.
 
 The core set of services for Saturnin currently contains next services:
 
@@ -23,5 +23,12 @@ The core set of services for Saturnin currently contains next services:
 * Firebird trace parser microservice [saturnin.firebird.trace.parser]
 * Firebird trace session provider microservice [saturnin.firebird.trace.session]
 
-.. _Saturnin: https://saturnin.readthedocs.io/en/latest/
-.. _documentation: https://saturnin-core.readthedocs.io/en/latest/
+Additional documentation related to Saturnin:
+
+- `Firebird Butler`_
+- `Saturnin SDK`_
+
+.. _Firebird Butler: https://firebird-butler.rtfd.io/
+.. _Saturnin: https://saturnin.rtfd.io/
+.. _Saturnin CORE: https://saturnin-core.rtfd.io/
+.. _Saturnin SDK: https://saturnin-sdk.rtfd.io/
