@@ -15,6 +15,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import sphinx_bootstrap_theme
+from saturnin.core.__about__ import __version__
 
 # -- Project information -----------------------------------------------------
 
@@ -23,10 +24,10 @@ copyright = '2019-2023, The Firebird Project'
 author = 'Pavel Císař'
 
 # The short X.Y version
-version = '0.8.0'
+version = __version__
 
 # The full version, including alpha/beta/rc tags
-release = '0.8.0'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
