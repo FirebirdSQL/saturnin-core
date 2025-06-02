@@ -33,19 +33,57 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - Text file writer microservice
+"""Saturnin microservices - Text file writer microservice implementation.
 
-This microservice is a DATA_CONSUMER that wites blocks of text from input data pipe to file.
+This module provides the `TextWriterMicro` service, a DATA_CONSUMER that
+receives data from an input data pipe and writes it to a specified file or
+standard output stream.
+
+Core Functionality:
+- Receives data chunks from a connected data producer.
+- Writes the received data to a local file, `stdout`, or `stderr`.
+
+Input Data Handling:
+- Supports input data in `text/plain` format. The character set (`charset`)
+  and error handling strategy (`errors`) for decoding are determined by the
+  client's request or the service's `pipe_format` configuration.
+- Supports input data in `application/x.fb.proto` format. The specific
+  Protocol Buffer message `type` must be specified. The service converts
+  the parsed protobuf message to its string representation before writing.
+
+Output File Handling:
+- The output is always written as text. The `charset` and `errors` for encoding
+  are defined by the service's `file_format` configuration (which must be `text/plain`).
+- Supports various file opening modes:
+  - `CREATE`: Creates a new file; fails if the file already exists.
+  - `WRITE`: Overwrites the file if it exists, or creates it. For `stdout`/`stderr`.
+  - `APPEND`: Appends to the file if it exists, or creates it.
+  - `RENAME`: If the target file exists, it's renamed (e.g., `file.txt` to `file.txt.1`)
+    before a new file is created for writing.
+
+Configuration:
+  The service is configured using `TextWriterConfig` (defined in `.api`), which
+  specifies:
+  - `filename`: The target output file path or special names `stdout`/`stderr`.
+  - `file_format`: The MIME type and parameters (e.g., `charset`) for the output file.
+  - `file_mode`: The mode for opening the output file.
+  - `pipe_format`: The expected data format from the input pipe, used when the
+    service initiates the connection.
+
+The primary class in this module is:
+- `TextWriterMicro`: Implements the text file writer microservice logic.
 """
 
 from __future__ import annotations
-from typing import TextIO, cast
+
 import os
+from typing import TextIO, cast
+
 from firebird.base.protobuf import create_message, is_msg_registered
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, \
-     FileOpenMode, Channel, SocketMode
-from saturnin.lib.data.onepipe import DataConsumerMicro, ErrorCode, FBDPSession, FBDPMessage
-from .api import TextWriterConfig, SUPPORTED_MIME
+from saturnin.base import MIME, MIME_TYPE_PROTO, MIME_TYPE_TEXT, Channel, FileOpenMode, SocketMode, StopError
+from saturnin.lib.data.onepipe import DataConsumerMicro, ErrorCode, FBDPMessage, FBDPSession
+
+from .api import SUPPORTED_MIME, TextWriterConfig
 
 # Classes
 
@@ -94,9 +132,8 @@ class TextWriterMicro(DataConsumerMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         # Configuration
-        self.file: TextIO = None
+        self.file: TextIO | None = None
         self.filename: str = config.filename.value
         self.file_format: MIME = config.file_format.value
         self.file_mode: FileOpenMode = config.file_mode.value
@@ -172,7 +209,7 @@ class TextWriterMicro(DataConsumerMicro):
             except UnicodeError as exc:
                 raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
     def handle_pipe_closed(self, channel: Channel, session: FBDPSession, msg: FBDPMessage,
-                           exc: Exception=None) -> None:
+                           exc: Exception | None=None) -> None:
         """Event handler executed when CLOSE message is received or sent, to release any
         resources associated with current transmission.
 

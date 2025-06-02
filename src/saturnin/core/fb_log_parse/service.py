@@ -33,20 +33,55 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - Firebird log parser microservice
+"""Saturnin microservices - Firebird log parser microservice.
 
 This microservice is a DATA_FILTER that reads blocks of Firebird log text from input data
 pipe, and sends parsed Firebird log entries into output data pipe.
+
+Core Functionality:
+- Acts as a DATA_FILTER, transforming text-based log data into structured data.
+- Receives Firebird log data as text from an input data pipe.
+- Parses the incoming text line by line to identify individual log entries.
+- Converts each parsed log entry into a `saturnin.core.protobuf.fblog.LogEntry`
+  protobuf message.
+- Sends these protobuf messages to an output data pipe.
+
+Input Data Handling (Input Pipe):
+- Expects data in `text/plain` format.
+- The character set (`charset`) and error handling strategy (`errors`) for decoding
+  the input text are determined by the client's request (if the service accepts
+  a connection on the input pipe) or by the service's `input_pipe_format`
+  configuration (if the service initiates the connection).
+
+Output Data Handling (Output Pipe):
+- Produces data in `application/x.fb.proto` format, specifically with the
+  `type` parameter set to `saturnin.core.protobuf.fblog.LogEntry`.
+- The service uses an internal `LogParser` instance from `firebird.lib.log`
+  to process the text and generate structured `LogMessage` objects, which are
+  then mapped to the `LogEntry` protobuf messages.
+
+Configuration:
+  The service is configured using `FbLogParserConfig` (defined in `.api`), which
+  specifies:
+  - `input_pipe_format`: The expected MIME type and parameters for the input pipe.
+  - `output_pipe_format`: The MIME type and parameters for the output pipe.
+  It inherits other common data filter configurations.
+
+The primary class in this module is:
+- `FbLogParserMicro`: Implements the Firebird log parsing filter logic.
 """
 
 from __future__ import annotations
-from typing import List, cast
-from firebird.base.types import STOP
+
+from typing import cast
+
 from firebird.base.protobuf import create_message
-from firebird.lib.log import LogParser, LogMessage
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, Channel, SocketMode
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
-from .api import FbLogParserConfig, LOG_PROTO
+from firebird.base.types import STOP
+from firebird.lib.log import LogMessage, LogParser
+from saturnin.base import MIME, MIME_TYPE_PROTO, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
+from .api import LOG_PROTO, FbLogParserConfig
 
 # Classes
 
@@ -57,12 +92,11 @@ class FbLogParserMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
         self.proto = create_message(LOG_PROTO)
-        self.entry_buf: List[str] = []
+        self.entry_buf: list[str] = []
         self.parser: LogParser = LogParser()
-        self.input_lefover = None
+        self.input_leftover: str | None = None
         #
         if self.input_pipe_mode is SocketMode.CONNECT:
             self.input_protocol.on_init_session = self.handle_init_session
@@ -182,13 +216,13 @@ class FbLogParserMicro(DataFilterMicro):
             block: str = data.decode(encoding=session.charset, errors=session.errors)
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
-        if self.input_lefover is not None:
-            block = self.input_lefover + block
-            self.input_lefover = None
-        lines = block.splitlines()
+        if self.input_leftover is not None:
+            block = self.input_leftover + block
+            self.input_leftover = None
+        lines: list[str] = block.splitlines()
         if block[-1] != '\n':
-            self.input_lefover = lines.pop()
-        batch = []
+            self.input_leftover = lines.pop()
+        batch: list = []
         for line in lines:
             if (entry := self.parser.push(line)) is not None:
                 batch.append(entry)

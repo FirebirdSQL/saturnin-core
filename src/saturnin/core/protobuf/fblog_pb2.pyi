@@ -9,7 +9,7 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class FirebirdFacility(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = []
+    __slots__ = ()
     FACILITY_UNKNOWN: _ClassVar[FirebirdFacility]
     FACILITY_SYSTEM: _ClassVar[FirebirdFacility]
     FACILITY_CONFIG: _ClassVar[FirebirdFacility]
@@ -36,7 +36,7 @@ FACILITY_NET: FirebirdFacility
 FACILITY_AUTH: FirebirdFacility
 
 class LogEntry(_message.Message):
-    __slots__ = ["origin", "timestamp", "level", "code", "facility", "message", "params"]
+    __slots__ = ("origin", "timestamp", "level", "code", "facility", "message", "params")
     ORIGIN_FIELD_NUMBER: _ClassVar[int]
     TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
     LEVEL_FIELD_NUMBER: _ClassVar[int]

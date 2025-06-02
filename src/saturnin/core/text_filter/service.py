@@ -35,17 +35,65 @@
 
 """Saturnin microservices - Text line filter microservice
 
-This microservice is a DATA_FILTER that reads blocks of text from input data pipe, and
-writes lines that meet the specified conditions as blocks of text into output data pipe.
+This module provides the `TextLineFilterMicro` service, a DATA_FILTER that
+receives blocks of text from an input data pipe, filters these lines based on
+user-defined criteria, and then writes the qualifying lines as blocks of text
+to an output data pipe.
+
+Core Functionality:
+- Acts as a DATA_FILTER, selectively passing text lines.
+- Receives text data in blocks from an input data pipe.
+- Processes the input text line by line, reassembling lines that may span
+  across multiple input data blocks.
+- Applies a filter condition to each complete line.
+- Sends lines that satisfy the filter condition to an output data pipe,
+  also in blocks.
+
+Input Data Handling (Input Pipe):
+- Expects data in `text/plain` format.
+- The character set (`charset`) and error handling strategy (`errors`) for
+  decoding the input text are determined by the client's request or the
+  service's `input_pipe_format` configuration.
+
+Filtering Logic:
+- Filtering is performed on a per-line basis.
+- The filter condition is defined by exactly one of the following configuration options:
+  - `regex`: A regular expression to match against each line.
+  - `expr`: A Python expression evaluated for each line (with the line available
+    as the `line` variable).
+  - `func`: A Python callable that accepts the line as a string and returns `True`
+    if the line should be passed.
+
+Output Data Handling (Output Pipe):
+- Produces data in `text/plain` format.
+- The character set (`charset`) and error handling strategy (`errors`) for
+  encoding the output text are determined by the client's request or the
+  service's `output_pipe_format` configuration.
+- Output text is buffered and sent in blocks, with the maximum number of
+  characters per block controlled by the `max_chars` configuration option.
+
+Configuration:
+  The service is configured using `TextFilterConfig` (defined in `.api`), which
+  specifies:
+  - `input_pipe_format`: MIME type and parameters for the input pipe.
+  - `output_pipe_format`: MIME type and parameters for the output pipe.
+  - `max_chars`: Maximum characters to send in a single output data message.
+  - `regex`, `expr`, or `func`: The filter definition.
+
+The primary class in this module is:
+- `TextLineFilterMicro`: Implements the text line filtering logic.
 """
 
 from __future__ import annotations
-from typing import List, Callable, cast
-import re
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, Channel, SocketMode
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
-from .api import TextFilterConfig
 
+import re
+from collections.abc import Callable
+from typing import List, cast
+
+from saturnin.base import MIME, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
+from .api import TextFilterConfig
 
 # Classes
 
@@ -59,7 +107,6 @@ class TextLineFilterMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
         self.max_chars: int = config.max_chars.value
         self.filter_func: Callable = None
@@ -71,9 +118,9 @@ class TextLineFilterMicro(DataFilterMicro):
         else:
             self.filter_func = config.func.value
         #
-        self.input_lefover = None
+        self.input_leftover = None
         self.to_write: int = self.max_chars
-        self.output_buffer: List[str] = []
+        self.output_buffer: list[str] = []
         #
         if self.input_pipe_mode is SocketMode.CONNECT:
             self.input_protocol.on_init_session = self.handle_init_session
@@ -159,12 +206,12 @@ class TextLineFilterMicro(DataFilterMicro):
             block: str = data.decode(encoding=session.charset, errors=session.errors)
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
-        if self.input_lefover is not None:
-            block = self.input_lefover + block
-            self.input_lefover = None
+        if self.input_leftover is not None:
+            block = self.input_leftover + block
+            self.input_leftover = None
         lines = block.splitlines()
         if block[-1] != '\n':
-            self.input_lefover = lines.pop()
+            self.input_leftover = lines.pop()
         for line in lines:
             if self.filter_func(line):
                 line += '\n'

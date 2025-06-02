@@ -8,7 +8,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ServiceTypeEnum(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = []
+    __slots__ = ()
     SVC_TYPE_UNKNOWN: _ClassVar[ServiceTypeEnum]
     SVC_TYPE_DATA_PROVIDER: _ClassVar[ServiceTypeEnum]
     SVC_TYPE_DATA_FILTER: _ClassVar[ServiceTypeEnum]
@@ -19,7 +19,7 @@ class ServiceTypeEnum(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     SVC_TYPE_OTHER: _ClassVar[ServiceTypeEnum]
 
 class SeverityLevel(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = []
+    __slots__ = ()
     SEVERITY_UNKNOWN: _ClassVar[SeverityLevel]
     SEVERITY_INFO: _ClassVar[SeverityLevel]
     SEVERITY_WARNING: _ClassVar[SeverityLevel]
@@ -40,7 +40,7 @@ SEVERITY_ERROR: SeverityLevel
 SEVERITY_CRITICAL: SeverityLevel
 
 class GenericDataRecord(_message.Message):
-    __slots__ = ["sequence", "data"]
+    __slots__ = ("sequence", "data")
     SEQUENCE_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]
     sequence: int
@@ -48,7 +48,7 @@ class GenericDataRecord(_message.Message):
     def __init__(self, sequence: _Optional[int] = ..., data: _Optional[_Union[_struct_pb2.Struct, _Mapping]] = ...) -> None: ...
 
 class GenericDataPackage(_message.Message):
-    __slots__ = ["records"]
+    __slots__ = ("records",)
     RECORDS_FIELD_NUMBER: _ClassVar[int]
     records: _containers.RepeatedCompositeFieldContainer[GenericDataRecord]
     def __init__(self, records: _Optional[_Iterable[_Union[GenericDataRecord, _Mapping]]] = ...) -> None: ...

@@ -43,11 +43,12 @@ This microservice is a DATA_FILTER:
 """
 
 from __future__ import annotations
+
 import uuid
 from functools import partial
+
 from firebird.base.config import ListOption
-from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_PROTO, AgentDescriptor,
-                           ServiceDescriptor, create_config)
+from saturnin.base import MIME, MIME_TYPE_PROTO, VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.proto.aggregator

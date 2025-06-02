@@ -15,7 +15,7 @@ The core set of services for Saturnin currently contains next services:
 
    For installation instructions, see the Saturnin_ documentation.
 
-.. note:: Requires Python 3.8+
+.. note:: Requires Python 3.11+
 
 Saturnin development is sponsored by IBPhoenix_.
 

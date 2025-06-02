@@ -35,16 +35,17 @@
 
 """Saturnin microservices - API for binary data file writer microservice
 
-This microservice is a DATA_CONSUMER that wites binary data from input data pipe to file.
+This microservice is a DATA_CONSUMER that writes binary data from input data pipe to file.
 """
 
 from __future__ import annotations
-from firebird.base.config import StrOption, EnumOption
+
 import uuid
 from enum import Enum, auto
 from functools import partial
-from saturnin.base import (create_config, VENDOR_UID, Error, FileOpenMode, AgentDescriptor,
-                           ServiceDescriptor)
+
+from firebird.base.config import EnumOption, StrOption
+from saturnin.base import VENDOR_UID, AgentDescriptor, Error, FileOpenMode, ServiceDescriptor, create_config
 from saturnin.lib.data.onepipe import DataConsumerConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.binary.writer
@@ -52,16 +53,23 @@ SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.2.2'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.1.1'
 
+_SPECIAL_WRITABLE_FILENAMES = {'stdout', 'stderr'}
+
 class FileStorageType(Enum):
     """Binary data storage type.
     """
+    #: Data is written directly to the file as a continuous stream.
     STREAM = auto()
+    #: Data is written in blocks, with each block prefixed by its length (a 4-byte network-order unsigned integer).
     BLOCK = auto()
 
 # Configuration
 
 class BinaryWriterConfig(DataConsumerConfig):
-    """Text file writer microservice configuration.
+    """Binary file writer microservice configuration.
+
+    Arguments:
+        name: The configuration section name.
     """
     def __init__(self, name: str):
         super().__init__(name)
@@ -81,9 +89,10 @@ class BinaryWriterConfig(DataConsumerConfig):
         - FileOpenMode.READ is not supported.
         """
         super().validate()
-        if (self.filename.value.lower() in ['stdout', 'stderr'] and
+        if (self.filename.value.lower() in _SPECIAL_WRITABLE_FILENAMES and
             self.file_mode.value != FileOpenMode.WRITE):
-            raise Error("STD[OUT|ERR] support only WRITE open mode")
+            raise Error(f"Special files ({', '.join(sorted(list(_SPECIAL_WRITABLE_FILENAMES)))}) "
+                        "support only WRITE open mode")
         if self.file_mode.value not in (FileOpenMode.APPEND, FileOpenMode.CREATE,
                                         FileOpenMode.RENAME, FileOpenMode.WRITE):
             raise Error(f"File open mode '{self.file_mode.value.name}' not supported")

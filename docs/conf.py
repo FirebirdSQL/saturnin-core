@@ -20,7 +20,7 @@ from saturnin.core.__about__ import __version__
 # -- Project information -----------------------------------------------------
 
 project = 'saturnin-core'
-copyright = '2019-2023, The Firebird Project'
+copyright = '2019-present, The Firebird Project'
 author = 'Pavel Císař'
 
 # The short X.Y version

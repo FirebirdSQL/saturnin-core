@@ -40,10 +40,12 @@ data pipe.
 """
 
 from __future__ import annotations
-from firebird.base.config import StrOption, IntOption
+
 import uuid
 from functools import partial
-from saturnin.base import create_config, VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor
+
+from firebird.base.config import IntOption, StrOption
+from saturnin.base import VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.binary.reader
@@ -54,7 +56,7 @@ SERVICE_VERSION: str = '0.1.1'
 # Configuration
 
 class BinaryReaderConfig(DataProviderConfig):
-    """Text file reader microservice configuration.
+    """Bindary file reader microservice configuration.
     """
     def __init__(self, name: str):
         super().__init__(name)

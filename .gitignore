@@ -134,3 +134,6 @@ dmypy.json
 
 # Sphinx build
 docs/_build
+
+# Local files
+local/

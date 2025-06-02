@@ -2,6 +2,15 @@
 Changelog
 #########
 
+Version 0.10.0
+==============
+
+* Minimal Python version raised to 3.11
+* Type hints adjusted to Python 3.11 standards
+* Improved documentation.
+* Dependencies updated to saturnin == 0.10.0, firebird-driver ~= 2.0 and firebird-lib ~= 2.0
+* Minor bugfixes.
+
 Version 0.9.0
 =============
 

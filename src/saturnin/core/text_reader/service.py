@@ -33,65 +33,143 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - Text file reader microservice
+"""Saturnin Microservices - Text File Reader
 
-This microservice is a DATA_PROVIDER that sends blocks of text from file to output data pipe.
+This module implements the Text File Reader microservice for the Saturnin
+platform.
+
+It provides the `TextReaderMicro` class, which acts as a `DATA_PROVIDER`
+in the Firebird Data Protocol (FBDP). The service reads text content from a
+specified file (or standard input stream) in configurable chunks and sends
+these chunks as data frames over an output data pipe to a connected client.
+
+Core Functionality:
+- Acts as a DATA_PROVIDER, serving text data.
+- Reads content from a local file or standard input (`stdin`).
+- Transmits data in chunks to a connected data consumer.
+
+File Input Handling:
+- The input source is specified by the `filename` configuration option. This can
+  be a path to a regular file or the special name `stdin`.
+- The `file_format` configuration (which must be `text/plain`) dictates the
+  `charset` (e.g., `utf-8`, `ascii`) and `errors` strategy (e.g., `strict`,
+  `replace`) used for decoding the content read from the file/stream.
+
+Data Transmission / Pipe Output:
+- Data is sent over the data pipe as `text/plain`.
+- The text read from the file is encoded into bytes for transmission using a
+  `charset` and `errors` strategy. These are determined by:
+  - The client's request (if the service is in LISTENING mode and the client
+    specifies format parameters in its OPEN message).
+  - The service's `pipe_format` configuration (if the service is in CONNECTING
+    mode, or if the client does not specify).
+- Text is read and sent in chunks, with the maximum number of characters per
+  data message controlled by the `max_chars` configuration option.
+
+Configuration:
+  The service is configured using `TextReaderConfig` (defined in `.api`), which
+  specifies:
+  - `filename`: The source file path or `stdin`.
+  - `file_format`: MIME type and parameters for reading the input file.
+  - `max_chars`: Maximum characters to send in a single data message.
+  - `pipe_format`: Default data format for the output pipe when initiating a connection.
+
+The primary class in this module is:
+- `TextReaderMicro`: Implements the text file reader microservice logic.
 """
 
 from __future__ import annotations
+
 from typing import TextIO, cast
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, Channel, SocketMode
-from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPSession, FBDPMessage
+
+from saturnin.base import MIME, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPMessage, FBDPSession
+
 from .api import TextReaderConfig
 
 # Classes
 
 class TextReaderMicro(DataProviderMicro):
-    """Text file reader microservice.
+    """Implements the core logic for the Text File Reader microservice.
+
+    This microservice acts as a `DATA_PROVIDER`, reading text from a file
+    and sending it over an output data pipe using the Firebird Data Protocol (FBDP).
+
+    It handles the opening, reading, and encoding of text from a specified file.
+    to provide data blocks to a connected client via an output data pipe.
+    Configuration options include the input filename, file encoding,
+    and maximum characters per message.
     """
     SYSIO = ('stdin', 'stdout', 'stderr')
     def _open_file(self) -> None:
-        "Open the input file."
+        """Opens the input file specified in the configuration.
+
+        Handles standard files as well as special filenames like 'stdin'.
+        The file is opened with encoding and error handling options derived
+        from `file_format` configuration.
+
+        Raises:
+            StopError: If the file cannot be opened, with `ErrorCode.ERROR`.
+        """
         self._close_file()
         if self.filename.lower() in self.SYSIO:
             fspec = self.SYSIO.index(self.filename.lower())
         else:
             fspec = self.filename
         try:
-            self.file = open(fspec, mode='r',
+            self.file = open(fspec,
                              encoding=self.file_format.params.get('charset', 'ascii'),
                              errors=self.file_format.params.get('errors', 'strict'),
                              closefd=self.filename.lower() not in self.SYSIO)
         except Exception as exc:
             raise StopError("Failed to open input file", code = ErrorCode.ERROR) from exc
     def _close_file(self) -> None:
-        "Close the input file if necessary"
+        """Closes the currently open input file, if any.
+
+        Sets `self.file` to None after closing.
+        """
         if self.file:
             self.file.close()
             self.file = None
     def initialize(self, config: TextReaderConfig) -> None:
-        """Verify configuration and assemble component structural parts.
-        """
-        super().initialize(config)
-        self.log_context = 'main'
-        # Configuration
-        self.file: TextIO = None
-        self.filename: str = config.filename.value
-        self.file_format: MIME = config.file_format.value
-        self.max_chars: int = config.max_chars.value
-        if self.pipe_mode is SocketMode.CONNECT:
-            self.protocol.on_init_session = self.handle_init_session
-    def handle_accept_client(self, channel: Channel, session: FBDPSession) -> None:
-        """Event handler executed when client connects to the data pipe via OPEN message.
+        """Initializes the microservice with the given configuration.
+
+        Calls the parent class's initialize method, then sets up specific
+        attributes from the `TextReaderConfig`, such as filename, file format,
+        and maximum characters per message. It also registers a session
+        initialization handler if the service is in CONNECT mode.
 
         Arguments:
-            session: Session associated with client.
+            config: The configuration object for this microservice.
+        """
+        super().initialize(config)
+        # Configuration
+        self.file: TextIO | None = None
+        self.filename: str | None = config.filename.value
+        self.file_format: MIME | None = config.file_format.value
+        self.max_chars: int | None = config.max_chars.value
+        if self.pipe_mode is SocketMode.CONNECT:
+            self.protocol.on_init_session = self.handle_init_session # type: ignore
+    def handle_accept_client(self, channel: Channel, session: FBDPSession) -> None:
+        """Handles a new client connection initiated by an OPEN message.
 
-        The session attributes `data_pipe`, `pipe_socket`, `data_format` and `params`
-        contain information sent by client, and the event handler validates the request.
+        This event handler validates the client's requested data format.
+        It ensures the MIME type is 'text/plain' and that only 'charset'
+        and 'errors' parameters are used. Upon successful validation,
+        it caches the charset and error handling mode in the session and
+        opens the configured input file.
 
-        If request should be rejected, it raises the `StopError` exception with `code`
-        attribute containing the `ErrorCode` to be returned in CLOSE message.
+        Args:
+            channel: The communication channel for the data pipe.
+            session: The FBDP session associated with the connecting client.
+                     Session attributes like `data_format` are populated by the
+                     protocol from the client's OPEN message.
+
+        Raises:
+            StopError: If the client's request is invalid (e.g., unsupported
+                       data format or parameters), with an appropriate `ErrorCode`
+                       to be sent in the CLOSE message. Also raised if the input
+                       file cannot be opened.
         """
         super().handle_accept_client(channel, session)
         if cast(MIME, session.data_format).mime_type != MIME_TYPE_TEXT:
@@ -107,26 +185,33 @@ class TextReaderMicro(DataProviderMicro):
         # Client reqest is ok, we'll open the file we are configured to work with.
         self._open_file()
     def handle_produce_data(self, channel: Channel, session: FBDPSession, msg: FBDPMessage) -> None:
-        """Handler is executed to store data into outgoing DATA message.
+        """Produces data for an outgoing FBDP DATA message.
+
+        This handler is called when the client is ready to receive data.
+        It reads up to `self.max_chars` characters from the input file,
+        encodes the chunk using the session's charset and error handling mode,
+        and stores the resulting bytes in `msg.data_frame`.
 
         Arguments:
-            channel: Channel associated with data pipe.
-            session: Session associated with client.
-            msg: DATA message that will be sent to client.
-
-        The event handler must store the data in `msg.data_frame` attribute. It may also
-        set ACK-REQUEST flag and `type_data` attribute.
-
-        The event handler may cancel the transmission by raising the `StopError` exception
-        with `code` attribute containing the `ErrorCode` to be returned in CLOSE message.
+            channel: The communication channel for the data pipe.
+            session: The FBDP session associated with the client. Contains
+                     cached `charset` and `errors` attributes.
+            msg: The outgoing `FBDPMessage` (DATA type) to be populated.
+                 The handler must set `msg.data_frame`.
 
         Note:
             To indicate end of data, raise StopError with ErrorCode.OK code.
 
-        Note:
             Exceptions are handled by protocol, but only StopError is checked for protocol
             ErrorCode. As we want to report INVALID_DATA properly, we have to convert
             exceptions into StopError.
+
+        Raises:
+            StopError:
+                - With `ErrorCode.OK` to indicate the end of the file (EOF).
+                - With `ErrorCode.INVALID_DATA` if a `UnicodeError` occurs
+                  during encoding.
+                - If the input file is not open and cannot be opened.
         """
         if self.file is None:
             self._open_file()
@@ -138,22 +223,34 @@ class TextReaderMicro(DataProviderMicro):
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
     def handle_pipe_closed(self, channel: Channel, session: FBDPSession, msg: FBDPMessage,
-                           exc: Exception=None) -> None:
-        """Event handler executed when CLOSE message is received or sent, to release any
-        resources associated with current transmission.
+                           exc: Exception | None=None) -> None:
+        """Handles the closure of the data pipe.
+
+        This event handler is executed when a CLOSE message is received from
+        the client or sent by this service. It ensures that any resources
+        associated with the current transmission, specifically the input file,
+        are released.
 
         Arguments:
-            channel: Channel associated with data pipe.
-            session: Session associated with peer.
-            msg: Received/sent CLOSE message.
-            exc: Exception that caused the error.
+            channel: The communication channel for the data pipe.
+            session: The FBDP session associated with the peer.
+            msg: The CLOSE message that was received or sent.
+            exc: The exception that led to the pipe closure, if any.
         """
         super().handle_pipe_closed(channel, session, msg, exc)
         self._close_file()
     def handle_init_session(self, channel: Channel, session: FBDPSession) -> None:
-        """Event executed from `send_open()` to set additional information to newly
-        created session instance.
+        """Initializes a new session when the service initiates a connection (CONNECT mode).
+
+        This event handler is called by `send_open()` before sending the
+        OPEN message to the peer. It caches the `charset` and `errors`
+        parameters from `session.data_format` (which is based on `self.pipe_format`)
+        into the session object for later use during data production.
+
+        Arguments:
+            channel: The communication channel for the data pipe.
+            session: The newly created `FBDPSession` instance to be initialized.
         """
         # cache attributes
-        session.charset = cast(MIME, session.data_format).params.get('charset', 'ascii')
-        session.errors = cast(MIME, session.data_format).params.get('errors', 'strict')
+        session.charset: str = cast(MIME, session.data_format).params.get('charset', 'ascii') # type: ignore
+        session.errors: str = cast(MIME, session.data_format).params.get('errors', 'strict') # type: ignore

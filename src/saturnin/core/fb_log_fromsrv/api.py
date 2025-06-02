@@ -40,11 +40,12 @@ services and send it as blocks of text to output data pipe.
 """
 
 from __future__ import annotations
+
 import uuid
-from firebird.base.config import StrOption, IntOption
 from functools import partial
-from saturnin.base import (create_config, VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
-                           MIME_TYPE_TEXT)
+
+from firebird.base.config import IntOption, StrOption
+from saturnin.base import MIME_TYPE_TEXT, VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.log.fromsrv

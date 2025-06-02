@@ -39,12 +39,23 @@ This microservice is a DATA_CONSUMER that wites blocks of text from input data p
 """
 
 from __future__ import annotations
-from firebird.base.config import MIMEOption, StrOption, EnumOption
+
 import uuid
 from functools import partial
+
+from firebird.base.config import EnumOption, MIMEOption, StrOption
 from firebird.base.protobuf import is_msg_registered
-from saturnin.base import (VENDOR_UID, Error, FileOpenMode, AgentDescriptor, create_config,
-                           ServiceDescriptor, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO)
+from saturnin.base import (
+    MIME,
+    MIME_TYPE_PROTO,
+    MIME_TYPE_TEXT,
+    VENDOR_UID,
+    AgentDescriptor,
+    Error,
+    FileOpenMode,
+    ServiceDescriptor,
+    create_config,
+)
 from saturnin.lib.data.onepipe import DataConsumerConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.writer
@@ -52,14 +63,14 @@ SERVICE_OID: str = '1.3.6.1.4.1.53446.1.1.0.3.1.2'
 SERVICE_UID: uuid.UUID = uuid.uuid5(uuid.NAMESPACE_OID, SERVICE_OID)
 SERVICE_VERSION: str = '0.2.1'
 
-SUPPORTED_MIME = (MIME_TYPE_TEXT, MIME_TYPE_PROTO)
+SUPPORTED_MIME: tuple[MIME, ...]= (MIME_TYPE_TEXT, MIME_TYPE_PROTO)
 
 # Configuration
 
 class TextWriterConfig(DataConsumerConfig):
     """Text file writer microservice configuration.
     """
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         super().__init__(name)
         # Adjust default batch_size to compensate default 64K messages in producers
         self.batch_size.default = 5

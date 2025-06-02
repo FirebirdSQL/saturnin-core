@@ -44,11 +44,12 @@ This microservice is a DATA_FILTER:
 """
 
 from __future__ import annotations
+
 import uuid
 from functools import partial
+
 from firebird.base.config import PyCallableOption, PyExprOption
-from saturnin.base import (create_config, VENDOR_UID, Error, MIME_TYPE_PROTO, AgentDescriptor,
-                           ServiceDescriptor)
+from saturnin.base import MIME_TYPE_PROTO, VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.proto.filter
@@ -71,14 +72,14 @@ class ProtoFilterConfig(DataFilterConfig):
         #: Data inclusion Python function
         self.include_func: PyCallableOption = \
             PyCallableOption('include_func', "Data inclusion Python function",
-                             'def f(data: Any) -> bool:\n  ...\n')
+                             'def f(data: Any) -> bool:')
         #: Data exclusion Python expression
         self.exclude_expr: PyExprOption = \
             PyExprOption('exclude_expr', "Data exclusion Python expression")
         #: Data exclusion Python function
         self.exclude_func: PyCallableOption = \
             PyCallableOption('exclude_func', "Data exclusion Python function",
-                             'def f(data: Any) -> bool:\n  ...\n')
+                             'def f(data: Any) -> bool:')
     def validate(self) -> None:
         """Extended validation.
 
@@ -100,7 +101,7 @@ class ProtoFilterConfig(DataFilterConfig):
         if self.input_pipe_format.value is not None \
            and self.output_pipe_format.value is not None \
            and self.output_pipe_format.value.params.get('type') != self.input_pipe_format.value.params.get('type'):
-                raise Error(f"The 'type' parameter value must be the same for both MIME format options.")
+                raise Error("The 'type' parameter value must be the same for both MIME format options.")
         #
         defined = 0
         for opt in [self.include_func, self.exclude_func, self.include_expr, self.exclude_expr]:

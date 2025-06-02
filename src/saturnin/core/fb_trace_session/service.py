@@ -33,17 +33,64 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - Firebird trace session provider microservice
+"""Saturnin microservices - Firebird trace session provider.
 
 This microservice is a DATA_PROVIDER that runs trace session on Firebird server via
 services and send trace output as blocks of text to output data pipe.
+
+This module provides the `FbTraceSessionMicro` service, a DATA_PROVIDER that
+initiates and manages a trace session on a Firebird server. It captures the
+trace output and sends it as blocks of text over an output data pipe.
+
+Core Functionality:
+- Acts as a DATA_PROVIDER, serving text data from a Firebird trace session.
+- Connects to a specified Firebird server using the `firebird-driver`.
+- Starts a new trace session on the server using a provided trace configuration.
+- Retrieves the live text output from the running trace session.
+- Transmits the trace output in chunks to a connected data consumer.
+- Stops the trace session when the data transmission is complete or interrupted.
+
+Data Source (Firebird Trace Session):
+- The target Firebird server is specified by the `server` configuration option,
+  which refers to a server definition in the Firebird driver configuration.
+- The `trace` configuration option provides the configuration string
+  that defines what events the trace session will capture.
+- An optional `session_name` can be provided for the trace session on the server.
+
+Data Transmission / Pipe Output:
+- Data is sent over the data pipe as `text/plain`.
+- The trace output text read from the server is encoded into bytes for transmission.
+  The `charset` (e.g., `utf-8`, `ascii`) and `errors` strategy (e.g., `strict`,
+  `replace`) for this encoding are determined by:
+  - The client's request (if the service is in LISTENING mode and the client
+    specifies format parameters in its OPEN message).
+  - The service's `pipe_format` configuration (if the service is in CONNECTING
+    mode, or if the client does not specify).
+- Trace output is read and sent in chunks, with the maximum number of characters
+  per data message controlled by the `max_chars` configuration option.
+
+Configuration:
+  The service is configured using `FbTraceSessionConfig` (defined in `.api`), which
+  specifies:
+  - `server`: The Firebird server identification (from driver configuration).
+  - `max_chars`: Maximum characters to send in a single data message.
+  - `trace`: The XML trace configuration string.
+  - `session_name`: An optional name for the trace session.
+  - `pipe_format`: Default data format (`text/plain` with optional `charset`
+    and `errors`) for the output pipe when initiating a connection.
+
+The primary class in this module is:
+- `FbTraceSessionMicro`: Implements the Firebird trace session provider logic.
 """
 
 from __future__ import annotations
+
 from typing import cast
-from firebird.driver import connect_server, Server
-from saturnin.base import StopError, MIME, Channel, SocketMode, MIME_TYPE_TEXT
-from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPSession, FBDPMessage
+
+from firebird.driver import Server, connect_server
+from saturnin.base import MIME, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPMessage, FBDPSession
+
 from .api import FbTraceSessionConfig
 
 # Classes
@@ -51,7 +98,7 @@ from .api import FbTraceSessionConfig
 class FbTraceSessionMicro(DataProviderMicro):
     """Implementation of Firebird trace session provider microservice.
     """
-    def __read(self, max_chars: int) -> str:
+    def _read(self, max_chars: int) -> str | None:
         "Read `max_chars` characters from service"
         to_read = max_chars - len(self.in_buffer)
         eof = False
@@ -90,15 +137,14 @@ class FbTraceSessionMicro(DataProviderMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
-        self.svc: Server = None
+        self.svc: Server | None = None
         self.in_buffer: str = ''
         # Configuration
         self.server: str = config.server.value
         self.max_chars: int = config.max_chars.value
         self.session_conf: str = config.trace.value
         self.session_name: str = config.session_name.value
-        self.session_id: int = None
+        self.session_id: int | None = None
         #
         if self.pipe_mode is SocketMode.CONNECT:
             self.protocol.on_init_session = self.handle_init_session
@@ -164,14 +210,14 @@ class FbTraceSessionMicro(DataProviderMicro):
             exceptions into StopError.
         """
         try:
-            if buf := self.__read(self.max_chars):
+            if buf := self._read(self.max_chars):
                 msg.data_frame = buf.encode(encoding=session.charset, errors=session.errors)
             else:
                 raise StopError('OK', code=ErrorCode.OK)
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
     def handle_pipe_closed(self, channel: Channel, session: FBDPSession, msg: FBDPMessage,
-                           exc: Exception=None) -> None:
+                           exc: Exception | None=None) -> None:
         """Event handler executed when CLOSE message is received or sent, to release any
         resources associated with current transmission.
 

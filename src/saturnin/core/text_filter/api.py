@@ -40,12 +40,13 @@ writes lines that meet the specified conditions as blocks of text into output da
 """
 
 from __future__ import annotations
-import uuid
+
 import re
+import uuid
 from functools import partial
-from firebird.base.config import StrOption, IntOption, PyExprOption, PyCallableOption
-from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor,
-                           MIME_TYPE_TEXT, create_config)
+
+from firebird.base.config import IntOption, PyCallableOption, PyExprOption, StrOption
+from saturnin.base import MIME_TYPE_TEXT, VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.linefilter
@@ -73,7 +74,7 @@ class TextFilterConfig(DataFilterConfig):
         self.func: PyCallableOption = \
             PyCallableOption('func',
                              "Python function with signature: def fname(line: str) -> bool",
-                             'def f(line: str) -> bool:\n  ...\n')
+                             'def f(line: str) -> bool:')
     def validate(self) -> None:
         """Extended validation.
 

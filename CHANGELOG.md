@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.10.0] - 2025-06-02
+
+### Changed
+
+- Minimal Python version raised to 3.11
+- Type hints adjusted to Python 3.11 standards
+- Improved documentation.
+- Dependencies updated to saturnin == 0.10.0, firebird-driver ~= 2.0 and firebird-lib ~= 2.0
+- Minor bugfixes.
+
 ## [0.9.0] - 2023-10-05
 
 ### Added

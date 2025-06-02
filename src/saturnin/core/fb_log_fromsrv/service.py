@@ -35,15 +35,54 @@
 
 """Saturnin microservices - Firebird log from server provider microservice
 
-This microservice is a DATA_PROVIDER that fetches Firebird log from Firebird server via
-services and send it as blocks of text to output data pipe.
+This module provides the `FbLogFromSrvMicro` service, a DATA_PROVIDER that
+connects to a Firebird server, fetches its log content, and sends this
+content as blocks of text over an output data pipe.
+
+Core Functionality:
+- Acts as a DATA_PROVIDER, serving text data from a Firebird server's log.
+- Connects to a Firebird server using the `firebird-driver`.
+- Retrieves the server log via the server's service manager interface.
+- Transmits the log content in chunks to a connected data consumer.
+
+Data Source (Firebird Server Log):
+- The target Firebird server is specified by the `server` configuration option,
+  which refers to a server definition in the Firebird driver configuration.
+- The service initiates a log retrieval operation (`get_log`) from the server.
+
+Data Transmission / Pipe Output:
+- Data is sent over the data pipe as `text/plain`.
+- The log text read from the server is encoded into bytes for transmission.
+  The `charset` (e.g., `utf-8`, `ascii`) and `errors` strategy (e.g., `strict`,
+  `replace`) for this encoding are determined by:
+  - The client's request (if the service is in LISTENING mode and the client
+    specifies format parameters in its OPEN message).
+  - The service's `pipe_format` configuration (if the service is in CONNECTING
+    mode, or if the client does not specify).
+- Log content is read and sent in chunks, with the maximum number of characters
+  per data message controlled by the `max_chars` configuration option.
+
+Configuration:
+  The service is configured using `FbLogFromSrvConfig` (defined in `.api`), which
+  specifies:
+  - `server`: The Firebird server identification (from driver configuration).
+  - `max_chars`: Maximum characters to send in a single data message.
+  - `pipe_format`: Default data format (`text/plain` with optional `charset`
+    and `errors`) for the output pipe when initiating a connection.
+
+The primary class in this module is:
+- `FbLogFromSrvMicro`: Implements the Firebird log provider microservice logic.
 """
 
+
 from __future__ import annotations
+
 from typing import cast
-from firebird.driver import connect_server, Server
-from saturnin.base import StopError, MIME, Channel, SocketMode, MIME_TYPE_TEXT
-from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPSession, FBDPMessage
+
+from firebird.driver import Server, connect_server
+from saturnin.base import MIME, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.onepipe import DataProviderMicro, ErrorCode, FBDPMessage, FBDPSession
+
 from .api import FbLogFromSrvConfig
 
 # Classes
@@ -51,7 +90,7 @@ from .api import FbLogFromSrvConfig
 class FbLogFromSrvMicro(DataProviderMicro):
     """Implementation of Firebird log from server provider microservice.
     """
-    def __read(self, max_chars: int) -> str:
+    def __read(self, max_chars: int) -> str | None:
         "Read `max_chars` characters from service"
         to_read = max_chars - len(self.in_buffer)
         eof = False
@@ -88,8 +127,7 @@ class FbLogFromSrvMicro(DataProviderMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
-        self.svc: Server = None
+        self.svc: Server | None = None
         self.in_buffer: str = ''
         # Configuration
         self.server: str = config.server.value
@@ -165,7 +203,7 @@ class FbLogFromSrvMicro(DataProviderMicro):
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
     def handle_pipe_closed(self, channel: Channel, session: FBDPSession, msg: FBDPMessage,
-                           exc: Exception=None) -> None:
+                           exc: Exception | None=None) -> None:
         """Event handler executed when CLOSE message is received or sent, to release any
         resources associated with current transmission.
 

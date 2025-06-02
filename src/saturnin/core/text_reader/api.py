@@ -33,17 +33,20 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - API for Text file reader microservice
+"""Defines the API for the Text File Reader microservice.
 
-This microservice is a DATA_PROVIDER that sends blocks of text from file to output data pipe.
+This microservice acts as a DATA_PROVIDER, reading blocks of text from a
+specified file and sending them to an output data pipe.
 """
 
+
 from __future__ import annotations
-from firebird.base.config import MIMEOption, StrOption, IntOption
+
 import uuid
 from functools import partial
-from saturnin.base import (VENDOR_UID, Error, AgentDescriptor, ServiceDescriptor, MIME,
-                           MIME_TYPE_TEXT, create_config)
+
+from firebird.base.config import IntOption, MIMEOption, StrOption
+from saturnin.base import MIME, MIME_TYPE_TEXT, VENDOR_UID, AgentDescriptor, Error, ServiceDescriptor, create_config
 from saturnin.lib.data.onepipe import DataProviderConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.text.reader
@@ -54,7 +57,11 @@ SERVICE_VERSION: str = '0.2.1'
 # Configuration
 
 class TextReaderConfig(DataProviderConfig):
-    """Text file reader microservice configuration.
+    """Initializes the text reader configuration.
+
+    Arguments:
+        name: The name for this configuration instance, typically used as the
+              section name in configuration files.
     """
     def __init__(self, name: str):
         super().__init__(name)
@@ -73,12 +80,15 @@ class TextReaderConfig(DataProviderConfig):
                       "Max. number of characters transmitted in one message",
                       required=True, default=65535)
     def validate(self) -> None:
-        """Extended validation.
+        """Performs extended validation beyond the base class.
 
-        - Only 'text/plain' MIME type is alowed for `file_format` and `pipe_format`
-          specifications.
-        - Only 'charset' and 'errors' MIME parameters are alowed for `file_format` and
-          `pipe_format` specifications.
+        Ensures that:
+        - Both `file_format` and `pipe_format` options specify the 'text/plain' MIME type.
+        - Only 'charset' and 'errors' are used as MIME parameters within
+          `file_format` and `pipe_format`.
+
+        Raises:
+            Error: If any of the validation checks fail.
         """
         super().validate()
         # File format

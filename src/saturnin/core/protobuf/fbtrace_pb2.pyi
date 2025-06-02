@@ -8,7 +8,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Status(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
-    __slots__ = []
+    __slots__ = ()
     STATUS_UNKNOWN: _ClassVar[Status]
     STATUS_OK: _ClassVar[Status]
     STATUS_FAILED: _ClassVar[Status]
@@ -19,7 +19,7 @@ STATUS_FAILED: Status
 STATUS_UNAUTHORIZED: Status
 
 class AttachmentInfo(_message.Message):
-    __slots__ = ["id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid"]
+    __slots__ = ("id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid")
     ID_FIELD_NUMBER: _ClassVar[int]
     DATABASE_FIELD_NUMBER: _ClassVar[int]
     CHARSET_FIELD_NUMBER: _ClassVar[int]
@@ -41,7 +41,7 @@ class AttachmentInfo(_message.Message):
     def __init__(self, id: _Optional[int] = ..., database: _Optional[str] = ..., charset: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., user: _Optional[str] = ..., role: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class TransactionInfo(_message.Message):
-    __slots__ = ["id", "att_id", "options"]
+    __slots__ = ("id", "att_id", "options")
     ID_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     OPTIONS_FIELD_NUMBER: _ClassVar[int]
@@ -51,7 +51,7 @@ class TransactionInfo(_message.Message):
     def __init__(self, id: _Optional[int] = ..., att_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class ServiceInfo(_message.Message):
-    __slots__ = ["id", "user", "protocol", "address", "remote_process", "remote_pid"]
+    __slots__ = ("id", "user", "protocol", "address", "remote_process", "remote_pid")
     ID_FIELD_NUMBER: _ClassVar[int]
     USER_FIELD_NUMBER: _ClassVar[int]
     PROTOCOL_FIELD_NUMBER: _ClassVar[int]
@@ -67,7 +67,7 @@ class ServiceInfo(_message.Message):
     def __init__(self, id: _Optional[int] = ..., user: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class SQLInfo(_message.Message):
-    __slots__ = ["id", "sql", "plan"]
+    __slots__ = ("id", "sql", "plan")
     ID_FIELD_NUMBER: _ClassVar[int]
     SQL_FIELD_NUMBER: _ClassVar[int]
     PLAN_FIELD_NUMBER: _ClassVar[int]
@@ -77,7 +77,7 @@ class SQLInfo(_message.Message):
     def __init__(self, id: _Optional[int] = ..., sql: _Optional[str] = ..., plan: _Optional[str] = ...) -> None: ...
 
 class Param(_message.Message):
-    __slots__ = ["type", "value"]
+    __slots__ = ("type", "value")
     TYPE_FIELD_NUMBER: _ClassVar[int]
     VALUE_FIELD_NUMBER: _ClassVar[int]
     type: str
@@ -85,7 +85,7 @@ class Param(_message.Message):
     def __init__(self, type: _Optional[str] = ..., value: _Optional[str] = ...) -> None: ...
 
 class ParamSet(_message.Message):
-    __slots__ = ["id", "param"]
+    __slots__ = ("id", "param")
     ID_FIELD_NUMBER: _ClassVar[int]
     PARAM_FIELD_NUMBER: _ClassVar[int]
     id: int
@@ -93,7 +93,7 @@ class ParamSet(_message.Message):
     def __init__(self, id: _Optional[int] = ..., param: _Optional[_Iterable[_Union[Param, _Mapping]]] = ...) -> None: ...
 
 class AccessStats(_message.Message):
-    __slots__ = ["table", "natural", "index", "update", "insert", "delete", "backout", "purge", "expunge"]
+    __slots__ = ("table", "natural", "index", "update", "insert", "delete", "backout", "purge", "expunge")
     TABLE_FIELD_NUMBER: _ClassVar[int]
     NATURAL_FIELD_NUMBER: _ClassVar[int]
     INDEX_FIELD_NUMBER: _ClassVar[int]
@@ -115,7 +115,7 @@ class AccessStats(_message.Message):
     def __init__(self, table: _Optional[str] = ..., natural: _Optional[int] = ..., index: _Optional[int] = ..., update: _Optional[int] = ..., insert: _Optional[int] = ..., delete: _Optional[int] = ..., backout: _Optional[int] = ..., purge: _Optional[int] = ..., expunge: _Optional[int] = ...) -> None: ...
 
 class TraceEvent(_message.Message):
-    __slots__ = ["id", "timestamp"]
+    __slots__ = ("id", "timestamp")
     ID_FIELD_NUMBER: _ClassVar[int]
     TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
     id: int
@@ -123,7 +123,7 @@ class TraceEvent(_message.Message):
     def __init__(self, id: _Optional[int] = ..., timestamp: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
 
 class EventTraceInit(_message.Message):
-    __slots__ = ["event", "session"]
+    __slots__ = ("event", "session")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     SESSION_FIELD_NUMBER: _ClassVar[int]
     event: TraceEvent
@@ -131,7 +131,7 @@ class EventTraceInit(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., session: _Optional[str] = ...) -> None: ...
 
 class EventTraceSuspend(_message.Message):
-    __slots__ = ["event", "session"]
+    __slots__ = ("event", "session")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     SESSION_FIELD_NUMBER: _ClassVar[int]
     event: TraceEvent
@@ -139,7 +139,7 @@ class EventTraceSuspend(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., session: _Optional[str] = ...) -> None: ...
 
 class EventTraceFinish(_message.Message):
-    __slots__ = ["event", "session"]
+    __slots__ = ("event", "session")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     SESSION_FIELD_NUMBER: _ClassVar[int]
     event: TraceEvent
@@ -147,7 +147,7 @@ class EventTraceFinish(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., session: _Optional[str] = ...) -> None: ...
 
 class EventCreate(_message.Message):
-    __slots__ = ["event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid"]
+    __slots__ = ("event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -173,7 +173,7 @@ class EventCreate(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., database: _Optional[str] = ..., charset: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., user: _Optional[str] = ..., role: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class EventDrop(_message.Message):
-    __slots__ = ["event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid"]
+    __slots__ = ("event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -199,7 +199,7 @@ class EventDrop(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., database: _Optional[str] = ..., charset: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., user: _Optional[str] = ..., role: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class EventAttach(_message.Message):
-    __slots__ = ["event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid"]
+    __slots__ = ("event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -225,7 +225,7 @@ class EventAttach(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., database: _Optional[str] = ..., charset: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., user: _Optional[str] = ..., role: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class EventDetach(_message.Message):
-    __slots__ = ["event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid"]
+    __slots__ = ("event", "status", "att_id", "database", "charset", "protocol", "address", "user", "role", "remote_process", "remote_pid")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -251,7 +251,7 @@ class EventDetach(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., database: _Optional[str] = ..., charset: _Optional[str] = ..., protocol: _Optional[str] = ..., address: _Optional[str] = ..., user: _Optional[str] = ..., role: _Optional[str] = ..., remote_process: _Optional[str] = ..., remote_pid: _Optional[int] = ...) -> None: ...
 
 class EventTransactionStart(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "options"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "options")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -265,7 +265,7 @@ class EventTransactionStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventCommit(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -289,7 +289,7 @@ class EventCommit(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ...) -> None: ...
 
 class EventRollback(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -313,7 +313,7 @@ class EventRollback(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ...) -> None: ...
 
 class EventCommitRetaining(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -337,7 +337,7 @@ class EventCommitRetaining(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ...) -> None: ...
 
 class EventRollbackRetaining(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "options", "run_time", "reads", "writes", "fetches", "marks")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -361,7 +361,7 @@ class EventRollbackRetaining(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., options: _Optional[_Iterable[str]] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ...) -> None: ...
 
 class EventPrepareStatement(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "stm_id", "sql_id", "prepare"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "stm_id", "sql_id", "prepare")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -379,7 +379,7 @@ class EventPrepareStatement(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., sql_id: _Optional[int] = ..., prepare: _Optional[int] = ...) -> None: ...
 
 class EventStatementStart(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "stm_id", "sql_id", "param_id"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "stm_id", "sql_id", "param_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -397,7 +397,7 @@ class EventStatementStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., sql_id: _Optional[int] = ..., param_id: _Optional[int] = ...) -> None: ...
 
 class EventStatementFinish(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "stm_id", "sql_id", "param_id", "records", "run_time", "reads", "writes", "fetches", "marks", "access"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "stm_id", "sql_id", "param_id", "records", "run_time", "reads", "writes", "fetches", "marks", "access")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -429,7 +429,7 @@ class EventStatementFinish(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., sql_id: _Optional[int] = ..., param_id: _Optional[int] = ..., records: _Optional[int] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ..., access: _Optional[_Iterable[_Union[AccessStats, _Mapping]]] = ...) -> None: ...
 
 class EventFreeStatement(_message.Message):
-    __slots__ = ["event", "att_id", "tra_id", "stm_id", "sql_id"]
+    __slots__ = ("event", "att_id", "tra_id", "stm_id", "sql_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     TRA_ID_FIELD_NUMBER: _ClassVar[int]
@@ -443,7 +443,7 @@ class EventFreeStatement(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., sql_id: _Optional[int] = ...) -> None: ...
 
 class EventCloseCursor(_message.Message):
-    __slots__ = ["event", "att_id", "tra_id", "stm_id", "sql_id"]
+    __slots__ = ("event", "att_id", "tra_id", "stm_id", "sql_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     TRA_ID_FIELD_NUMBER: _ClassVar[int]
@@ -457,7 +457,7 @@ class EventCloseCursor(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., sql_id: _Optional[int] = ...) -> None: ...
 
 class EventTriggerStart(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "trigger", "table", "t_event"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "trigger", "table", "t_event")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -475,7 +475,7 @@ class EventTriggerStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., trigger: _Optional[str] = ..., table: _Optional[str] = ..., t_event: _Optional[str] = ...) -> None: ...
 
 class EventTriggerFinish(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "trigger", "table", "t_event", "run_time", "reads", "writes", "fetches", "marks", "access"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "trigger", "table", "t_event", "run_time", "reads", "writes", "fetches", "marks", "access")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -505,7 +505,7 @@ class EventTriggerFinish(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., trigger: _Optional[str] = ..., table: _Optional[str] = ..., t_event: _Optional[str] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ..., access: _Optional[_Iterable[_Union[AccessStats, _Mapping]]] = ...) -> None: ...
 
 class EventProcedureStart(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "procedure", "param_id"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "procedure", "param_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -521,7 +521,7 @@ class EventProcedureStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., procedure: _Optional[str] = ..., param_id: _Optional[int] = ...) -> None: ...
 
 class EventProcedureFinish(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "procedure", "param_id", "run_time", "reads", "writes", "fetches", "marks", "access"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "procedure", "param_id", "run_time", "reads", "writes", "fetches", "marks", "access")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -549,7 +549,7 @@ class EventProcedureFinish(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., procedure: _Optional[str] = ..., param_id: _Optional[int] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ..., access: _Optional[_Iterable[_Union[AccessStats, _Mapping]]] = ...) -> None: ...
 
 class EventServiceAttach(_message.Message):
-    __slots__ = ["event", "status", "svc_id"]
+    __slots__ = ("event", "status", "svc_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
@@ -559,7 +559,7 @@ class EventServiceAttach(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., svc_id: _Optional[int] = ...) -> None: ...
 
 class EventServiceDetach(_message.Message):
-    __slots__ = ["event", "status", "svc_id"]
+    __slots__ = ("event", "status", "svc_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
@@ -569,7 +569,7 @@ class EventServiceDetach(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., svc_id: _Optional[int] = ...) -> None: ...
 
 class EventServiceStart(_message.Message):
-    __slots__ = ["event", "status", "svc_id", "action", "params"]
+    __slots__ = ("event", "status", "svc_id", "action", "params")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
@@ -583,7 +583,7 @@ class EventServiceStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., svc_id: _Optional[int] = ..., action: _Optional[str] = ..., params: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventServiceQuery(_message.Message):
-    __slots__ = ["event", "status", "svc_id", "action", "params"]
+    __slots__ = ("event", "status", "svc_id", "action", "params")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
@@ -597,7 +597,7 @@ class EventServiceQuery(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., svc_id: _Optional[int] = ..., action: _Optional[str] = ..., params: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventSetContext(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "context", "key", "value"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "context", "key", "value")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -615,7 +615,7 @@ class EventSetContext(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., context: _Optional[str] = ..., key: _Optional[str] = ..., value: _Optional[str] = ...) -> None: ...
 
 class EventError(_message.Message):
-    __slots__ = ["event", "att_id", "place", "details"]
+    __slots__ = ("event", "att_id", "place", "details")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     PLACE_FIELD_NUMBER: _ClassVar[int]
@@ -627,7 +627,7 @@ class EventError(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., place: _Optional[str] = ..., details: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventWarning(_message.Message):
-    __slots__ = ["event", "att_id", "place", "details"]
+    __slots__ = ("event", "att_id", "place", "details")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     PLACE_FIELD_NUMBER: _ClassVar[int]
@@ -639,7 +639,7 @@ class EventWarning(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., place: _Optional[str] = ..., details: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventServiceError(_message.Message):
-    __slots__ = ["event", "svc_id", "place", "details"]
+    __slots__ = ("event", "svc_id", "place", "details")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
     PLACE_FIELD_NUMBER: _ClassVar[int]
@@ -651,7 +651,7 @@ class EventServiceError(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., svc_id: _Optional[int] = ..., place: _Optional[str] = ..., details: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventServiceWarning(_message.Message):
-    __slots__ = ["event", "svc_id", "place", "details"]
+    __slots__ = ("event", "svc_id", "place", "details")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     SVC_ID_FIELD_NUMBER: _ClassVar[int]
     PLACE_FIELD_NUMBER: _ClassVar[int]
@@ -663,7 +663,7 @@ class EventServiceWarning(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., svc_id: _Optional[int] = ..., place: _Optional[str] = ..., details: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EventSweepStart(_message.Message):
-    __slots__ = ["event", "att_id", "oit", "oat", "ost", "next"]
+    __slots__ = ("event", "att_id", "oit", "oat", "ost", "next")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     OIT_FIELD_NUMBER: _ClassVar[int]
@@ -679,7 +679,7 @@ class EventSweepStart(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., oit: _Optional[int] = ..., oat: _Optional[int] = ..., ost: _Optional[int] = ..., next: _Optional[int] = ...) -> None: ...
 
 class EventSweepProgress(_message.Message):
-    __slots__ = ["event", "att_id", "run_time", "reads", "writes", "fetches", "marks", "access"]
+    __slots__ = ("event", "att_id", "run_time", "reads", "writes", "fetches", "marks", "access")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     RUN_TIME_FIELD_NUMBER: _ClassVar[int]
@@ -699,7 +699,7 @@ class EventSweepProgress(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ..., access: _Optional[_Iterable[_Union[AccessStats, _Mapping]]] = ...) -> None: ...
 
 class EventSweepFinish(_message.Message):
-    __slots__ = ["event", "att_id", "oit", "oat", "ost", "next", "run_time", "reads", "writes", "fetches", "marks"]
+    __slots__ = ("event", "att_id", "oit", "oat", "ost", "next", "run_time", "reads", "writes", "fetches", "marks")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     OIT_FIELD_NUMBER: _ClassVar[int]
@@ -725,7 +725,7 @@ class EventSweepFinish(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ..., oit: _Optional[int] = ..., oat: _Optional[int] = ..., ost: _Optional[int] = ..., next: _Optional[int] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ...) -> None: ...
 
 class EventSweepFailed(_message.Message):
-    __slots__ = ["event", "att_id"]
+    __slots__ = ("event", "att_id")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
     event: TraceEvent
@@ -733,7 +733,7 @@ class EventSweepFailed(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., att_id: _Optional[int] = ...) -> None: ...
 
 class EventBLRCompile(_message.Message):
-    __slots__ = ["event", "status", "att_id", "stm_id", "content", "prepare"]
+    __slots__ = ("event", "status", "att_id", "stm_id", "content", "prepare")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -749,7 +749,7 @@ class EventBLRCompile(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., content: _Optional[str] = ..., prepare: _Optional[int] = ...) -> None: ...
 
 class EventBLRExecute(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "stm_id", "content", "run_time", "reads", "writes", "fetches", "marks", "access"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "stm_id", "content", "run_time", "reads", "writes", "fetches", "marks", "access")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -777,7 +777,7 @@ class EventBLRExecute(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., stm_id: _Optional[int] = ..., content: _Optional[str] = ..., run_time: _Optional[int] = ..., reads: _Optional[int] = ..., writes: _Optional[int] = ..., fetches: _Optional[int] = ..., marks: _Optional[int] = ..., access: _Optional[_Iterable[_Union[AccessStats, _Mapping]]] = ...) -> None: ...
 
 class EventDYNExecute(_message.Message):
-    __slots__ = ["event", "status", "att_id", "tra_id", "content", "run_time"]
+    __slots__ = ("event", "status", "att_id", "tra_id", "content", "run_time")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ATT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -793,7 +793,7 @@ class EventDYNExecute(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., status: _Optional[_Union[Status, str]] = ..., att_id: _Optional[int] = ..., tra_id: _Optional[int] = ..., content: _Optional[str] = ..., run_time: _Optional[int] = ...) -> None: ...
 
 class EventUnknown(_message.Message):
-    __slots__ = ["event", "data"]
+    __slots__ = ("event", "data")
     EVENT_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]
     event: TraceEvent
@@ -801,7 +801,7 @@ class EventUnknown(_message.Message):
     def __init__(self, event: _Optional[_Union[TraceEvent, _Mapping]] = ..., data: _Optional[str] = ...) -> None: ...
 
 class TraceEntry(_message.Message):
-    __slots__ = ["att_info", "tra_info", "svc_info", "sql_info", "params", "trace_init", "trace_suspend", "trace_finish", "db_create", "db_drop", "db_attach", "db_detach", "tra_start", "tra_commit", "tra_rollback", "tra_commit_retain", "tra_rollback_retain", "stm_prepare", "stm_start", "stm_finish", "stm_free", "cursor_close", "trigger_start", "trigger_finish", "proc_start", "proc_finish", "svc_attach", "svc_detach", "svc_start", "svc_query", "ctx_set", "error", "warning", "svc_error", "svc_warning", "swp_start", "swp_progress", "swp_finish", "swp_fail", "blr_compile", "blr_exec", "dyn_exec", "unknown"]
+    __slots__ = ("att_info", "tra_info", "svc_info", "sql_info", "params", "trace_init", "trace_suspend", "trace_finish", "db_create", "db_drop", "db_attach", "db_detach", "tra_start", "tra_commit", "tra_rollback", "tra_commit_retain", "tra_rollback_retain", "stm_prepare", "stm_start", "stm_finish", "stm_free", "cursor_close", "trigger_start", "trigger_finish", "proc_start", "proc_finish", "svc_attach", "svc_detach", "svc_start", "svc_query", "ctx_set", "error", "warning", "svc_error", "svc_warning", "swp_start", "swp_progress", "swp_finish", "swp_fail", "blr_compile", "blr_exec", "dyn_exec", "unknown")
     ATT_INFO_FIELD_NUMBER: _ClassVar[int]
     TRA_INFO_FIELD_NUMBER: _ClassVar[int]
     SVC_INFO_FIELD_NUMBER: _ClassVar[int]

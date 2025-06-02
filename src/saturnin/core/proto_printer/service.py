@@ -35,20 +35,64 @@
 
 """Saturnin microservices - Protobuf printer microservice
 
-This microservice is a DATA_FILTER:
+This module provides the `ProtoPrinterMicro` service, a DATA_FILTER that
+receives Protocol Buffer (protobuf) messages from an input data pipe,
+formats them into human-readable text strings, and sends these strings
+as blocks of text to an output data pipe.
 
-- INPUT: protobuf messages
-- PROCESSING: uses formatting template and data from protobuf message to create text
-- OUTPUT: blocks of text
+Core Functionality:
+- Acts as a DATA_FILTER, transforming structured protobuf data into text.
+- Receives protobuf messages of a configurable type from an input data pipe.
+- Formats each incoming message into a string using either a user-defined
+  Python template string or a Python function.
+- Sends the resulting text to an output data pipe.
+
+Input Data Handling (Input Pipe):
+- Expects data in `application/x.fb.proto` format.
+- The specific input protobuf message `type` (e.g., `my.custom.Message`) must be
+  specified in the `input_pipe_format` configuration.
+
+Transformation Logic:
+- The transformation from a protobuf message to a text string is defined by
+  either the `template` or `func` configuration option:
+  - `template`: A Python f-string-like template where `data` (the protobuf message)
+    and `utils` (an instance of `TransformationUtilities`) are available.
+  - `func`: A Python callable that accepts the `data` (protobuf message) and
+    `utils` (TransformationUtilities instance) and returns a string.
+- The `TransformationUtilities` class provides helper methods for common
+  formatting tasks, such as getting enum names, formatting lists/dictionaries,
+  and converting messages to JSON.
+
+Output Data Handling (Output Pipe):
+- Produces data in `text/plain` format.
+- The character set (`charset`) and error handling strategy (`errors`) for
+  encoding the output text are determined by the client's request or the
+  service's `output_pipe_format` configuration.
+
+Configuration:
+  The service is configured using `ProtoPrinterConfig` (defined in `.api`), which
+  specifies:
+  - `input_pipe_format`: The MIME type and `type` of the input protobuf messages.
+  - `output_pipe_format`: The MIME type and parameters (charset, errors) for the output text.
+  - `template`: A string template for formatting.
+  - `func`: A Python function for formatting.
+  (Exactly one of `template` or `func` must be provided).
+
+The primary class in this module is:
+- `ProtoPrinterMicro`: Implements the protobuf message printing filter logic.
 """
 
 from __future__ import annotations
-from typing import Dict, Sequence, ItemsView, Callable, Any, cast
+
+from collections.abc import Callable, ItemsView, Sequence
+from typing import Any, Dict, cast
+
 from google.protobuf.json_format import MessageToJson
-from firebird.base.protobuf import create_message, is_msg_registered, get_enum_field_type, \
-     get_enum_value_name
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, Channel, SocketMode
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
+
+from firebird.base.protobuf import create_message, get_enum_field_type, get_enum_value_name, is_msg_registered
+from saturnin.base import MIME, MIME_TYPE_PROTO, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
 from .api import ProtoPrinterConfig
 
 # Classes
@@ -80,7 +124,7 @@ class TransformationUtilities:
         """Returns string with list of key = value pairs from ItemsView.
         """
         return separator.join(f"{indent}{key} = {value}" for key, value in items) + end
-    def formatted(self, fmt: str, context: Dict) -> str:
+    def formatted(self, fmt: str, context: dict) -> str:
         """Returns `fmt` as f-string evaluated using values from `context` dictionary as locals.
         """
         if context:
@@ -98,7 +142,6 @@ class ProtoPrinterMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
         self.transform_func: Callable[[Any], str] = None
         self.fmt: str = None

@@ -35,21 +35,61 @@
 
 """Saturnin microservices - Protobuf aggregator microservice
 
-This microservice is a DATA_FILTER:
+This module provides the `ProtoAggregatorMicro` service, a DATA_FILTER that
+receives a stream of Protocol Buffer (protobuf) messages, groups them based on
+specified criteria, performs aggregate calculations on these groups, and then
+outputs the results as new protobuf messages.
 
-- INPUT: protobuf messages
-- PROCESSING: uses expressions / functions evaluating data from protobuf message to
-  aggregator data for output
-- OUTPUT: protobuf messages
+Core Functionality:
+- Acts as a DATA_FILTER, transforming and summarizing protobuf message streams.
+- Receives protobuf messages of a configurable type from an input data pipe.
+- Groups incoming messages based on values derived from evaluating expressions
+  against the message fields (defined by the `group_by` configuration).
+- For each group, calculates aggregate values (e.g., count, min, max, sum, average)
+  based on expressions evaluated against message fields (defined by the `aggregate`
+  configuration).
+- Sends the aggregated results as `saturnin.core.protobuf.GenericDataRecord`
+  protobuf messages to an output data pipe. Each output message represents one
+  group and its calculated aggregates.
+
+Input Data Handling (Input Pipe):
+- Expects data in `application/x.fb.proto` format.
+- The specific input protobuf message `type` (e.g., `my.custom.Message`) must be
+  specified in the `input_pipe_format` configuration.
+
+Processing Logic:
+- Grouping: Uses `GroupByItem` helper class. Expressions in the `group_by`
+  configuration define how to extract key values from input messages.
+- Aggregation: Uses `AggregateItem` helper class. Expressions in the `aggregate`
+  configuration define the aggregate function (count, min, max, sum, avg) and
+  the field/value to aggregate.
+
+Output Data Handling (Output Pipe):
+- Produces data in `application/x.fb.proto` format, with the `type` parameter
+  fixed to `saturnin.core.protobuf.GenericDataRecord`.
+
+Configuration:
+  The service is configured using `ProtoAggregatorConfig` (defined in `.api`), which
+  specifies:
+  - `group_by`: A list of expressions to define grouping keys.
+  - `aggregate`: A list of expressions to define aggregate calculations.
+  - `input_pipe_format`: The MIME type and `type` of the input protobuf messages.
+  - `output_pipe_format`: Fixed to output `GenericDataRecord` messages.
+
+The primary class in this module is:
+- `ProtoAggregatorMicro`: Implements the protobuf aggregation filter logic.
 """
 
 from __future__ import annotations
-from typing import List, Dict, Tuple, Any
-from firebird.base.signal import eventsocket
+
+from typing import Any
+
 from firebird.base.protobuf import create_message, is_msg_registered
-from saturnin.base import StopError, MIME_TYPE_PROTO, Channel
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
-from .api import ProtoAggregatorConfig, AGGREGATE_FORMAT, AGGREGATE_PROTO
+from firebird.base.signal import eventsocket
+from saturnin.base import MIME_TYPE_PROTO, Channel, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
+from .api import AGGREGATE_FORMAT, AGGREGATE_PROTO, ProtoAggregatorConfig
 
 # Classes
 
@@ -75,14 +115,14 @@ class AggregateItem:
     """Aggregate item handler."""
     def __init__(self, spec: str):
         self.__count: int = 0
-        self.__value: Any = None
+        self.__value: Any | None = None
         self.spec = spec
         self.aggregate_func, field_spec = spec.split(':', 1)
         if ' as ' in self.aggregate_func:
             self.aggregate_func, self.name = self.aggregate_func.split(' as ')
         else:
             self.name = self.aggregate_func
-        ns = {}
+        ns: dict[str, Any] = {}
         code = compile(f"def expr(data):\n    return {field_spec}",
                        f"{self.aggregate_func}({field_spec})", 'exec')
         eval(code, ns)
@@ -144,12 +184,11 @@ class ProtoAggregatorMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
         self.data: Any = None
-        self.group_by: List[GroupByItem] = []
-        self.agg_defs: List[str] = []
-        self.aggregates: Dict[Tuple, AggregateItem] = {}
+        self.group_by: list[GroupByItem] = []
+        self.agg_defs: list[str] = []
+        self.aggregates: dict[tuple, AggregateItem] = {}
         #
         for item in config.group_by.value:
             self.group_by.append(GroupByItem(item))
@@ -181,7 +220,7 @@ class ProtoAggregatorMicro(DataFilterMicro):
         proto_class = session.data_format.params.get('type')
         if self.data.DESCRIPTOR.full_name != proto_class:
             raise StopError(f"Protobuf message type '{proto_class}' not allowed",
-                            code = ErrorCode.DATA_FORMAT_NOT_SUPPORTED)
+                            code=ErrorCode.DATA_FORMAT_NOT_SUPPORTED)
     def handle_output_accept_client(self, channel: Channel, session: FBDPSession) -> None:
         """Event handler executed when client connects to OUTPUT data pipe via OPEN message.
 
@@ -198,7 +237,7 @@ class ProtoAggregatorMicro(DataFilterMicro):
         super().handle_output_accept_client(channel, session)
         if session.data_format != AGGREGATE_FORMAT:
             raise StopError(f"Only '{AGGREGATE_FORMAT}' output format supported",
-                            code = ErrorCode.DATA_FORMAT_NOT_SUPPORTED)
+                            code=ErrorCode.DATA_FORMAT_NOT_SUPPORTED)
     def finish_input_processing(self, channel: Channel, session: FBDPSession, code: ErrorCode) -> None:
         """Called when input pipe is closed while output pipe will remain open.
 
@@ -211,7 +250,7 @@ class ProtoAggregatorMicro(DataFilterMicro):
             code:    Input pipe closing ErrorCode.
         """
         output_data = create_message(AGGREGATE_PROTO)
-        batch = []
+        batch: list = []
         for key, items in self.aggregates.items():
             output_data.Clear()
             i = 0

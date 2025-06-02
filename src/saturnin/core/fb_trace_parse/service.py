@@ -33,29 +33,107 @@
 # Contributor(s): Pavel Císař (original code)
 #                 ______________________________________.
 
-"""Saturnin microservices - Firebird trace parser microservice
+"""Saturnin microservices - Firebird trace parser microservice.
 
 This microservice is a DATA_FILTER that reads blocks of Firebird trace session text protocol
 from input data pipe, and sends parsed Firebird trace entries into output data pipe.
+
+This module provides the `FbTraceParserMicro` service, a DATA_FILTER that
+receives raw text output from a Firebird trace session via an input data pipe,
+parses it into structured trace events and information blocks, and sends these
+as Protocol Buffer messages over an output data pipe.
+
+Core Functionality:
+- Acts as a DATA_FILTER, transforming text-based trace data into structured data.
+- Receives raw Firebird trace output as text from an input data pipe.
+- Uses the `firebird.lib.trace.TraceParser` to parse the incoming text stream
+  into specific trace event objects (like `EventAttach`, `EventStatementStart`)
+  and information objects (like `AttachmentInfo`, `SQLInfo`).
+- Converts each parsed trace object into a `saturnin.core.protobuf.fbtrace.TraceEntry`
+  Protocol Buffer message.
+- Sends these structured protobuf messages to an output data pipe.
+
+Input Data Handling (Input Pipe):
+- Expects data in `text/plain` format.
+- The character set (`charset`) and error handling strategy (`errors`) for decoding
+  the input text are determined by the client's request (if the service accepts
+  a connection on the input pipe) or by the service's `input_pipe_format`
+  configuration (if the service initiates the connection).
+
+Output Data Handling (Output Pipe):
+- Produces data in `application/x.fb.proto` format, specifically with the
+  `type` parameter set to `saturnin.core.protobuf.fbtrace.TraceEntry`.
+
+Configuration:
+  The service is configured using `FbTraceParserConfig` (defined in `.api`), which
+  specifies:
+  - `input_pipe_format`: The expected MIME type and parameters for the input pipe.
+  - `output_pipe_format`: The MIME type and parameters for the output pipe.
+  It inherits other common data filter configurations.
+
+The primary class in this module is:
+- `FbTraceParserMicro`: Implements the Firebird trace parsing filter logic.
 """
 
 from __future__ import annotations
-from typing import List, cast
-from firebird.base.types import STOP
+
+from collections.abc import Callable
+from typing import Any, cast
+
 from firebird.base.protobuf import create_message
-from firebird.lib.trace import TraceParser, AttachmentInfo, TransactionInfo, ServiceInfo, \
-     SQLInfo, ParamSet, EventTraceInit, EventTraceSuspend, EventTraceFinish, EventCreate, \
-     EventDrop, EventAttach, EventDetach, EventTransactionStart, EventCommit, EventRollback, \
-     EventCommitRetaining, EventRollbackRetaining, EventPrepareStatement, \
-     EventStatementStart, EventStatementFinish, EventFreeStatement, EventCloseCursor, \
-     EventTriggerStart, EventTriggerFinish, EventProcedureStart, EventProcedureFinish, \
-     EventServiceAttach, EventServiceDetach, EventServiceStart, EventServiceQuery, \
-     EventSetContext, EventError, EventWarning, EventServiceError, EventServiceWarning, \
-     EventSweepStart, EventSweepProgress, EventSweepFinish, EventSweepFailed, \
-     EventBLRCompile, EventBLRExecute, EventDYNExecute, EventUnknown, Status, AccessStats
-from saturnin.base import StopError, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO, Channel, SocketMode
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
-from .api import FbTraceParserConfig, TRACE_PROTO
+from firebird.base.types import STOP
+from firebird.lib.trace import (
+    AccessStats,
+    AttachmentInfo,
+    EventAttach,
+    EventBLRCompile,
+    EventBLRExecute,
+    EventCloseCursor,
+    EventCommit,
+    EventCommitRetaining,
+    EventCreate,
+    EventDetach,
+    EventDrop,
+    EventDYNExecute,
+    EventError,
+    EventFreeStatement,
+    EventPrepareStatement,
+    EventProcedureFinish,
+    EventProcedureStart,
+    EventRollback,
+    EventRollbackRetaining,
+    EventServiceAttach,
+    EventServiceDetach,
+    EventServiceError,
+    EventServiceQuery,
+    EventServiceStart,
+    EventServiceWarning,
+    EventSetContext,
+    EventStatementFinish,
+    EventStatementStart,
+    EventSweepFailed,
+    EventSweepFinish,
+    EventSweepProgress,
+    EventSweepStart,
+    EventTraceFinish,
+    EventTraceInit,
+    EventTraceSuspend,
+    EventTransactionStart,
+    EventTriggerFinish,
+    EventTriggerStart,
+    EventUnknown,
+    EventWarning,
+    ParamSet,
+    ServiceInfo,
+    SQLInfo,
+    Status,
+    TraceParser,
+    TransactionInfo,
+)
+from saturnin.base import MIME, MIME_TYPE_PROTO, MIME_TYPE_TEXT, Channel, SocketMode, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
+from .api import TRACE_PROTO, FbTraceParserConfig
 
 # Classes
 
@@ -67,56 +145,56 @@ class FbTraceParserMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
         self.proto = create_message(TRACE_PROTO)
-        self.entry_buf: List[str] = []
+        self.entry_buf: list[str] = []
         self.parser: TraceParser = TraceParser()
-        self.input_lefover = None
+        self.input_leftover = None
         #
-        self.data_map: Dict = {AttachmentInfo: self.store_att_info,
-                               TransactionInfo: self.store_tra_info,
-                               ServiceInfo: self.store_svc_info,
-                               SQLInfo: self.store_sql_info,
-                               ParamSet: self.store_param_set,
-                               EventTraceInit: self.store_trace_init,
-                               EventTraceSuspend: self.store_trace_suspend,
-                               EventTraceFinish: self.store_trace_finish,
-                               EventCreate: self.store_db_create,
-                               EventDrop: self.store_db_drop,
-                               EventAttach: self.store_db_attach,
-                               EventDetach: self.store_db_detach,
-                               EventTransactionStart: self.store_tra_start,
-                               EventCommit: self.store_commit,
-                               EventRollback: self.store_rollback,
-                               EventCommitRetaining: self.store_commit_retain,
-                               EventRollbackRetaining: self.store_rollback_retain,
-                               EventPrepareStatement: self.store_stm_prepare,
-                               EventStatementStart: self.store_stm_start,
-                               EventStatementFinish: self.store_smt_finish,
-                               EventFreeStatement: self.store_stm_free,
-                               EventCloseCursor: self.store_cursor_close,
-                               EventTriggerStart: self.store_trigger_start,
-                               EventTriggerFinish: self.store_trigger_finish,
-                               EventProcedureStart: self.store_proc_start,
-                               EventProcedureFinish: self.store_proc_finish,
-                               EventServiceAttach: self.store_svc_attach,
-                               EventServiceDetach: self.store_svc_detach,
-                               EventServiceStart: self.store_svc_start,
-                               EventServiceQuery: self.store_svc_query,
-                               EventSetContext: self.store_ctx_set,
-                               EventError: self.store_error,
-                               EventWarning: self.store_warning,
-                               EventServiceError: self.store_svc_error,
-                               EventServiceWarning: self.store_svc_warning,
-                               EventSweepStart: self.store_swp_start,
-                               EventSweepProgress: self.store_swp_progress,
-                               EventSweepFinish: self.store_swp_finish,
-                               EventSweepFailed: self.store_swp_fail,
-                               EventBLRCompile: self.store_blr_compile,
-                               EventBLRExecute: self.store_blr_exec,
-                               EventDYNExecute: self.store_dyn_exec,
-                               EventUnknown: self.store_unknown}
+        self.data_map: dict[type, Callable[[Any], None]] = {
+            AttachmentInfo: self.store_att_info,
+            TransactionInfo: self.store_tra_info,
+            ServiceInfo: self.store_svc_info,
+            SQLInfo: self.store_sql_info,
+            ParamSet: self.store_param_set,
+            EventTraceInit: self.store_trace_init,
+            EventTraceSuspend: self.store_trace_suspend,
+            EventTraceFinish: self.store_trace_finish,
+            EventCreate: self.store_db_create,
+            EventDrop: self.store_db_drop,
+            EventAttach: self.store_db_attach,
+            EventDetach: self.store_db_detach,
+            EventTransactionStart: self.store_tra_start,
+            EventCommit: self.store_commit,
+            EventRollback: self.store_rollback,
+            EventCommitRetaining: self.store_commit_retain,
+            EventRollbackRetaining: self.store_rollback_retain,
+            EventPrepareStatement: self.store_stm_prepare,
+            EventStatementStart: self.store_stm_start,
+            EventStatementFinish: self.store_smt_finish,
+            EventFreeStatement: self.store_stm_free,
+            EventCloseCursor: self.store_cursor_close,
+            EventTriggerStart: self.store_trigger_start,
+            EventTriggerFinish: self.store_trigger_finish,
+            EventProcedureStart: self.store_proc_start,
+            EventProcedureFinish: self.store_proc_finish,
+            EventServiceAttach: self.store_svc_attach,
+            EventServiceDetach: self.store_svc_detach,
+            EventServiceStart: self.store_svc_start,
+            EventServiceQuery: self.store_svc_query,
+            EventSetContext: self.store_ctx_set,
+            EventError: self.store_error,
+            EventWarning: self.store_warning,
+            EventServiceError: self.store_svc_error,
+            EventServiceWarning: self.store_svc_warning,
+            EventSweepStart: self.store_swp_start,
+            EventSweepProgress: self.store_swp_progress,
+            EventSweepFinish: self.store_swp_finish,
+            EventSweepFailed: self.store_swp_fail,
+            EventBLRCompile: self.store_blr_compile,
+            EventBLRExecute: self.store_blr_exec,
+            EventDYNExecute: self.store_dyn_exec,
+            EventUnknown: self.store_unknown}
         #
         if self.input_pipe_mode is SocketMode.CONNECT:
             self.input_protocol.on_init_session = self.handle_init_session
@@ -164,7 +242,7 @@ class FbTraceParserMicro(DataFilterMicro):
     def store_event(self, proto, data: EventTraceInit) -> None:
         proto.event.id = data.event_id
         proto.event.timestamp.FromDatetime(data.timestamp)
-    def store_access(self, proto, data: List[AccessStats]) -> None:
+    def store_access(self, proto, data: list[AccessStats]) -> None:
         for acc in data:
             p = proto.access.add()
             p.table = acc.table
@@ -587,13 +665,13 @@ class FbTraceParserMicro(DataFilterMicro):
             block: str = data.decode(encoding=session.charset, errors=session.errors)
         except UnicodeError as exc:
             raise StopError("UnicodeError", code=ErrorCode.INVALID_DATA) from exc
-        if self.input_lefover is not None:
-            block = self.input_lefover + block
-            self.input_lefover = None
-        lines = block.splitlines()
+        if self.input_leftover is not None:
+            block = self.input_leftover + block
+            self.input_leftover = None
+        lines: list[str] = block.splitlines()
         if block[-1] != '\n':
-            self.input_lefover = lines.pop()
-        batch = []
+            self.input_leftover = lines.pop()
+        batch: list = []
         for line in lines:
             if (entry := self.parser.push(line)) is not None:
                 batch.extend(entry)

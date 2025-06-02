@@ -33,7 +33,7 @@ For information how to use these services, see [Saturnin CORE documentation](htt
 
 ## License
 
-`saturnin` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`saturnin` and `saturnin-core` are distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
 
 ## Installation
 

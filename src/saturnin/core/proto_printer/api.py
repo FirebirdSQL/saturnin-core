@@ -43,12 +43,23 @@ This microservice is a DATA_FILTER:
 """
 
 from __future__ import annotations
+
 import uuid
 from functools import partial
-from firebird.base.config import StrOption, PyCallableOption
+
+from firebird.base.config import PyCallableOption, StrOption
 from firebird.base.protobuf import is_msg_registered
-from saturnin.base import (VENDOR_UID, Error, MIME, MIME_TYPE_TEXT, MIME_TYPE_PROTO,
-                           SocketMode, AgentDescriptor, ServiceDescriptor, create_config)
+from saturnin.base import (
+    MIME,
+    MIME_TYPE_PROTO,
+    MIME_TYPE_TEXT,
+    VENDOR_UID,
+    AgentDescriptor,
+    Error,
+    ServiceDescriptor,
+    SocketMode,
+    create_config,
+)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.proto.printer
@@ -72,7 +83,7 @@ class ProtoPrinterConfig(DataFilterConfig):
         self.func: PyCallableOption = \
             PyCallableOption('func',
                              "Function that returns text representation of data",
-                             'def f(data: Any, utils: TransformationUtilities) -> str:\n  ...\n')
+                             'def f(data: Any, utils: TransformationUtilities) -> str:')
     def validate(self) -> None:
         """Extended validation.
 
@@ -96,7 +107,7 @@ class ProtoPrinterConfig(DataFilterConfig):
             if self.input_pipe_format.value.mime_type != MIME_TYPE_PROTO:
                 raise Error(f"Only '{MIME_TYPE_PROTO}' input format allowed.")
             if 'type' not in self.input_pipe_format.value.params:
-                raise Error(f"Missing required 'type' MIME parameter in input format.")
+                raise Error("Missing required 'type' MIME parameter in input format.")
             if not is_msg_registered(proto_class := self.input_pipe_format.value.params.get('type')):
                 raise Error(f"Unknown protobuf message type '{proto_class}'")
         #

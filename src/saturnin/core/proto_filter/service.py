@@ -35,19 +35,60 @@
 
 """Saturnin microservices - Protobuf filter microservice
 
-This microservice is a DATA_FILTER:
+This module provides the `ProtoFilterMicro` service, a DATA_FILTER that
+selectively passes Protocol Buffer (protobuf) messages from an input data pipe
+to an output data pipe based on user-defined criteria.
 
-- INPUT: protobuf messages
-- PROCESSING: uses expressions / functions evaluating data from protobuf message to filter data for output
-- OUTPUT: protobuf messages
+Core Functionality:
+- Acts as a DATA_FILTER, conditionally forwarding protobuf messages.
+- Receives protobuf messages of a configurable type from an input data pipe.
+- Evaluates a Python expression or calls a Python function against each
+  incoming message to determine if it should be passed through.
+- Sends the filtered protobuf messages (of the same type as input) to an
+  output data pipe.
+
+Input Data Handling (Input Pipe):
+- Expects data in `application/x.fb.proto` format.
+- The specific input protobuf message `type` (e.g., `my.custom.Message`) must be
+  specified in the `input_pipe_format` configuration.
+
+Filtering Logic:
+- Filtering is based on either an "include" or "exclude" condition.
+  - Include: If the condition evaluates to True, the message is passed.
+  - Exclude: If the condition evaluates to True, the message is dropped.
+- The condition is defined by one of the following configuration options:
+  `include_expr`, `include_func`, `exclude_expr`, or `exclude_func`.
+- Expressions/functions are evaluated with the incoming protobuf message instance
+  available as the `data` variable. The `datetime` module is also available
+  in the evaluation context for expressions.
+
+Output Data Handling (Output Pipe):
+- Produces data in `application/x.fb.proto` format.
+- The output protobuf message `type` is the same as the input message `type`.
+
+Configuration:
+  The service is configured using `ProtoFilterConfig` (defined in `.api`), which
+  specifies:
+  - `input_pipe_format`: The MIME type and `type` of the input protobuf messages.
+  - `output_pipe_format`: The MIME type and `type` for the output (must match input).
+  - `include_expr` / `include_func`: For inclusion-based filtering.
+  - `exclude_expr` / `exclude_func`: For exclusion-based filtering.
+  Only one of these four filter options can be active.
+
+The primary class in this module is:
+- `ProtoFilterMicro`: Implements the protobuf message filtering logic.
 """
 
 from __future__ import annotations
-from typing import Callable, Any
+
 import datetime
+from collections.abc import Callable
+from typing import Any
+
 from firebird.base.protobuf import create_message, is_msg_registered
-from saturnin.base import StopError, MIME, MIME_TYPE_PROTO, Channel
-from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPSession, FBDPMessage
+from saturnin.base import MIME, MIME_TYPE_PROTO, Channel, StopError
+from saturnin.lib.data.filter import DataFilterMicro, ErrorCode, FBDPMessage, FBDPSession
+
 from .api import ProtoFilterConfig
 
 # Classes
@@ -67,10 +108,9 @@ class ProtoFilterMicro(DataFilterMicro):
         """Verify configuration and assemble component structural parts.
         """
         super().initialize(config)
-        self.log_context = 'main'
         #
-        self.include_func: Callable = None
-        self.exclude_func: Callable = None
+        self.include_func: Callable[[Any], bool] | None = None
+        self.exclude_func: Callable[[Any], bool] | None = None
         self.data: Any = None
         self.fmt: MIME = None
         #

@@ -40,10 +40,20 @@ pipe, and sends parsed Firebird log entries into output data pipe.
 """
 
 from __future__ import annotations
+
 import uuid
 from functools import partial
-from saturnin.base import (create_config, VENDOR_UID, Error, MIME, MIME_TYPE_TEXT,
-                           MIME_TYPE_PROTO, AgentDescriptor, ServiceDescriptor)
+
+from saturnin.base import (
+    MIME,
+    MIME_TYPE_PROTO,
+    MIME_TYPE_TEXT,
+    VENDOR_UID,
+    AgentDescriptor,
+    Error,
+    ServiceDescriptor,
+    create_config,
+)
 from saturnin.lib.data.filter import DataFilterConfig
 
 # OID: iso.org.dod.internet.private.enterprise.firebird.butler.platform.saturnin.micro.firebird.log.parser
