@@ -5,6 +5,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/saturnin-core.svg)](https://pypi.org/project/saturnin-core)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/saturnin-core.svg)](https://pypi.org/project/saturnin-core)
 [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/FirebirdSQL/saturnin-core)
 
 The core set of services for Saturnin currently contains next services:
 
